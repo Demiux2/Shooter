@@ -1,134 +1,107 @@
-#include <GLFW/glfw3.h>
 #include <GL/gl.h>
+#include <GLFW/glfw3.h>
+#include <math.h>
 #include <stdio.h>
 
-#define WIN_WIDHT 800
-#define WIN_HEIGHT 600
-
-// Definimos una estructura para almacenar el estado del juego
+// Definir la estructura del motor de juego
 typedef struct {
-    GLFWwindow* window;  // Puntero a la ventana
-    float playerX, playerY, playerZ;  // Posición del jugador
-    float playerAngle;  // Ángulo de visión
-    int shoot;  // Estado del disparo (0: no disparando, 1: disparando)
+    GLFWwindow* window; // Puntero a la ventana
+    float playerX, playerZ; // Posición inicial del jugador
+    float angle; // Ángulo de rotación
+    float scale; // Factor de escala
 } GameEngine;
 
-// Función para inicializar la ventana y OpenGL
-int initWindow(GameEngine* engine, int width, int height, const char* title) {
+// Función para inicializar GLFW y OpenGL
+GLFWwindow* initWindow(GameEngine* engine) {
     if (!glfwInit()) {
-        printf("Error al inicializar GLFW\n");
-        return -1;
+        return NULL;
     }
 
-    engine->window = glfwCreateWindow(width, height, title, NULL, NULL);
+    engine->window = glfwCreateWindow(800, 600, "BASIC to OpenGL", NULL, NULL);
     if (!engine->window) {
-        printf("Error al crear la ventana\n");
         glfwTerminate();
-        return -1;
+        return NULL;
     }
 
     glfwMakeContextCurrent(engine->window);
-    glfwSwapInterval(1);  // Habilitar V-Sync (opcional)
-
-    return 0;
+    glOrtho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f); // Configuración ortográfica
+    return engine->window;
 }
 
-// Función para inicializar el motor de juego
-int initGameEngine(GameEngine* engine) {
-    // Inicializamos la ventana con dimensiones de 800x600 y título "Shooter Tipo Doom"
-    if (initWindow(engine, WIN_WIDHT, WIN_HEIGHT, "Shooter Tipo Doom") != 0) {
-        return -1;
-    }
+// Función de dibujado
+void draw(GameEngine* engine) {
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    // Inicializar otras partes del motor si es necesario
-    engine->playerX = 0.0f;
-    engine->playerY = 0.0f;
-    engine->playerZ = 0.0f;
-    engine->playerAngle = 0.0f;
-    engine->shoot = 0;
+    // Aplicar la escala a la escena
+    glPushMatrix();   // Guardar la matriz de transformación actual
+    glScalef(engine->scale, engine->scale, 1.0f);  // Escalar en X y Y (solo en 2D)
 
-    return 0;
+    // Dibuja una línea fija (roja)
+    glColor3f(1.0f, 0.0f, 0.0f);  // Color rojo
+    glBegin(GL_LINES);
+    glVertex2f(200, 140);           // Primer punto
+    glVertex2f(203, 249);          // Segundo punto
+    glEnd();
+
+    // Dibuja la línea que rota (azul)
+    float vx2 = engine->playerX + cos(engine->angle * 3.14159f / 180.0f) * 50;
+    float vy2 = engine->playerZ + sin(engine->angle * 3.14159f / 180.0f) * 50;
+    glColor3f(0.0f, 0.0f, 1.0f);  // Color azul
+    glBegin(GL_LINES);
+    glVertex2f(engine->playerX, engine->playerZ);           // Punto inicial
+    glVertex2f(vx2, vy2);         // Punto final
+    glEnd();
+
+    // Dibuja el punto en la posición actual (blanco)
+    glPointSize(10.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);  // Color blanco
+    glBegin(GL_POINTS);
+    glVertex2f(engine->playerX, engine->playerZ);
+    glEnd();
+
+    glPopMatrix();  // Restaurar la matriz de transformación
 }
 
-// Función para procesar la entrada del jugador
-void processInput(GameEngine* engine) {
-    if (glfwGetKey(engine->window, GLFW_KEY_W) == GLFW_PRESS) {
-	if((engine->playerY + 0.075f) < 0.9){
-        engine->playerY += 0.075f;  // Mover hacia adelante
-	}
+// Función para manejar la entrada del jugador
+void handleInput(GameEngine* engine) {
+    // Comprobamos las teclas presionadas
+    if (glfwGetKey(engine->window, GLFW_KEY_UP) == GLFW_PRESS) {
+        engine->playerX += cos(engine->angle * 3.14159f / 180.0f);  // Mover hacia adelante
+        engine->playerZ += sin(engine->angle * 3.14159f / 180.0f);
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_S) == GLFW_PRESS) {
-	if((engine->playerY - 0.075f) > -0.9){
-        engine->playerY -= 0.075f;  // Mover hacia atrás
-	}
+    if (glfwGetKey(engine->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        engine->playerX -= cos(engine->angle * 3.14159f / 180.0f);  // Mover hacia atrás
+        engine->playerZ -= sin(engine->angle * 3.14159f / 180.0f);
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS) {
-	if((engine->playerX - 0.075f) > -0.9){
-        engine->playerX -= 0.075f;  // Mover a la izquierda
-	}
-    }
-    if (glfwGetKey(engine->window, GLFW_KEY_D) == GLFW_PRESS) {
-	if((engine->playerX + 0.075f) < 0.9){
-        engine->playerX += 0.075f;  // Mover a la derecha
-	}
-    }
-
-    // Disparar
-    if (glfwGetKey(engine->window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        engine->shoot = 1;
-    } else {
-        engine->shoot = 0;
-    }
-
-    // Rotación (mirar a izquierda/derecha)
     if (glfwGetKey(engine->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-	if((engine->playerAngle - 1.0f) < -360){
-	engine->playerAngle = 0.0f;
-	}
-	else{
-        engine->playerAngle -= 1.0f;  // Girar a la izquierda
-	}
+        engine->angle -= 1.0f;  // Rotar hacia la izquierda
     }
     if (glfwGetKey(engine->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-	if((engine->playerAngle + 1.0f) > 360){
-	engine->playerAngle = 0.0f;
-	}
-	else{
-        engine->playerAngle += 1.0f;  // Girar a la derecha
-	}
+        engine->angle += 1.0f;  // Rotar hacia la derecha
     }
 
-
-    if (glfwGetKey(engine->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(engine->window, GLFW_TRUE);  // Cerrar la ventana
+    // Movimiento perpendicular
+    if (glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS) {
+        engine->playerX += sin(engine->angle * 3.14159f / 180.0f);  // Movimiento a la izquierda
+        engine->playerZ -= cos(engine->angle * 3.14159f / 180.0f);
     }
-}
-
-// Función para actualizar la lógica del juego (movimiento, disparos, etc.)
-void update(GameEngine* engine) {
-    // Lógica para el disparo (aquí solo imprimimos si está disparando)
-    if (engine->shoot) {
-        printf("Disparando desde (%f, %f) con ángulo %f\n", engine->playerX, engine->playerY, engine->playerAngle);
+    if (glfwGetKey(engine->window, GLFW_KEY_D) == GLFW_PRESS) {
+        engine->playerX -= sin(engine->angle * 3.14159f / 180.0f);  // Movimiento a la derecha
+        engine->playerZ += cos(engine->angle * 3.14159f / 180.0f);
     }
-}
 
-// Función para renderizar la escena
-void render(GameEngine* engine) {
-    glClear(GL_COLOR_BUFFER_BIT);  // Limpiar la pantalla (buffer de color)
-    
-    // Aquí podrías agregar código para dibujar el jugador, enemigos, objetos, etc.
-    // Ejemplo: renderizar al jugador como un cuadrado en la pantalla
-    glPushMatrix();
-    glTranslatef(engine->playerX, engine->playerY, 0.0f);  // Mover al jugador
-    glBegin(GL_QUADS);  // Dibujar el jugador como un cuadrado
-    glColor3f(0.0f, 1.0f, 0.0f);  // Color verde
-    glVertex2f(-0.1f, -0.1f);
-    glVertex2f( 0.1f, -0.1f);
-    glVertex2f( 0.1f,  0.1f);
-    glVertex2f(-0.1f,  0.1f);
-    glEnd();
-    glPopMatrix();
-    
-    glfwSwapBuffers(engine->window);  // Intercambiar los buffers para mostrar lo renderizado
+    // Modificar la escala
+    if (glfwGetKey(engine->window, GLFW_KEY_W) == GLFW_PRESS) {
+        engine->scale += 0.01f;  // Aumentar la escala
+    }
+    if (glfwGetKey(engine->window, GLFW_KEY_S) == GLFW_PRESS) {
+        engine->scale -= 0.01f;  // Reducir la escala
+        if (engine->scale < 0.1f) engine->scale = 0.1f;  // Limitar la escala mínima
+    }
+
+    // Salir si se presionan las teclas Q o Escape
+    if (glfwGetKey(engine->window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(engine->window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine->window)) {
+        glfwSetWindowShouldClose(engine->window, GLFW_TRUE);  // Salir
+    }
 }
 
