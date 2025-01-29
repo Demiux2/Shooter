@@ -1,0 +1,8 @@
+Test level 1        Map name
+1 1 1 1             playerX, playerY, playerZ, playerAngle
+
+[WALLS]             Wall header (ignore)
+1 1 1 1 1           px1, py1, px2, py2, wallmat
+
+[SECTORS]
+3 1 2 3 0 1 100 1   n_walls, wall1, wall2, ..., floor_height, floormat, ceiling_height, ceilingmat
