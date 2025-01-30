@@ -6,7 +6,7 @@
 int main(void) {
     GameEngine engine = {0};  // Inicializamos la estructura GameEngine
     engine.playerX = -9;
-    engine.playerY = 0;
+    engine.playerY = 3;
     engine.playerZ = 0;
     engine.scale = 2;
     engine.fov = 45;
