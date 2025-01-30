@@ -1,8 +1,11 @@
-Test level 1        Map name
-1 1 1 1             playerX, playerY, playerZ, playerAngle
+Test level 1            Map name
+1.0f 1.0f 1.0f 1.0f     playerX, playerY, playerZ, playerAngle
 
-[WALLS]             Wall header (ignore)
-1 1 1 1 1           px1, py1, px2, py2, wallmat
+[WALLS]                 Walls header
+1 1 1 1 1               px1, py1, px2, py2, wallmat
 
-[SECTORS]
-3 1 2 3 0 1 100 1   n_walls, wall1, wall2, ..., floor_height, floormat, ceiling_height, ceilingmat
+[SECTORS]               Sectors header
+3 1 2 3 0 1 100 1       n_walls, wall1, wall2, ..., floor_height, floormat, ceiling_height, ceilingmat
+
+----EOF----
+All spaces between sections must be respected or else file won't be read correctly
