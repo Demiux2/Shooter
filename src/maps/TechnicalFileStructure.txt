@@ -2,7 +2,7 @@ Test level 1            Map name
 1.0f 1.0f 1.0f 1.0f     playerX, playerY, playerZ, playerAngle
 
 [WALLS]                 Walls header
-1 1 1 1 1               px1, py1, px2, py2, wallmat
+1 1 1 1 1               px1, pz1, px2, pz2, wallmat
 
 [SECTORS]               Sectors header
 3 1 2 3 0 1 100 1       n_walls, wall1, wall2, ..., floor_height, floormat, ceiling_height, ceilingmat

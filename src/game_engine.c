@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include <stdio.h>
+//#include "ge/load_map.c"
 
 int width = 1366, height = 768;
 
@@ -24,7 +25,7 @@ GLFWwindow* initWindow(GameEngine* engine) {
     // Asegurémonos de que el doble buffer esté activado
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);  // Asegurarnos de usar doble buffer
 
-    engine->window = glfwCreateWindow(width, height, "BASIC to OpenGL", NULL, NULL);
+    engine->window = glfwCreateWindow(width, height, "Shooter Without Name", NULL, NULL);
     if (!engine->window) {
         glfwTerminate();
         return NULL;
@@ -63,30 +64,8 @@ void draw(GameEngine* engine) {
 
 
     // Dibuja la pirámide (esfera, cubo o lo que desees en 3D)
-    glBegin(GL_TRIANGLES);
-    // Cara 1 (triángulo)
-    glColor3f(1.0f, 0.0f, 0.0f); // Color rojo
-    glVertex3f(0.0f, 1.0f, 0.0f);  // Vértice 1
-    glVertex3f(-1.0f, -1.0f, 1.0f); // Vértice 2
-    glVertex3f(1.0f, -1.0f, 1.0f);  // Vértice 3
-
-    // Cara 2 (triángulo)
-    glColor3f(0.0f, 1.0f, 0.0f);  // Color verde
-    glVertex3f(0.0f, 1.0f, 0.0f);  // Vértice 1
-    glVertex3f(1.0f, -1.0f, 1.0f);  // Vértice 2
-    glVertex3f(0.0f, -1.0f, -1.0f); // Vértice 3
-
-    // Cara 3 (triángulo)
-    glColor3f(0.0f, 0.0f, 1.0f);  // Color azul
-    glVertex3f(0.0f, 1.0f, 0.0f);  // Vértice 1
-    glVertex3f(0.0f, -1.0f, -1.0f); // Vértice 2
-    glVertex3f(-1.0f, -1.0f, 1.0f); // Vértice 3
-
-    // Cara 4 (triángulo)
-    glColor3f(1.0f, 1.0f, 0.0f);  // Color amarillo
-    glVertex3f(-1.0f, -1.0f, 1.0f); // Vértice 1
-    glVertex3f(1.0f, -1.0f, 1.0f);  // Vértice 2
-    glVertex3f(0.0f, -1.0f, -1.0f); // Vértice 3
+    glBegin(GL_QUADS);
+    	render_map();
     glEnd();  // Finalizar la definición de los triángulos
 
     glPopMatrix();  // Restaurar la matriz de transformación
@@ -115,7 +94,6 @@ void handleInput(GameEngine* engine, double deltaTime) {
     if (glfwGetKey(engine->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         engine->angle += rotationSpeed * deltaTime;  // Rotar hacia la derecha
     }
-
     // Movimiento perpendicular
     if (glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS) {
         engine->playerX += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Movimiento a la izquierda
@@ -125,8 +103,14 @@ void handleInput(GameEngine* engine, double deltaTime) {
         engine->playerX -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Movimiento a la derecha
         engine->playerZ += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
+    if (glfwGetKey(engine->window, GLFW_KEY_UP) == GLFW_PRESS) {
+        engine->playerY +=  speed * deltaTime;  // Movimiento hacia arriba
+    }
+    if (glfwGetKey(engine->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        engine->playerY -= speed * deltaTime;  // Movimiento hacia abajo
+    }
 
-    // Modificar la escala
+
     // Modificar la escala
     if (glfwGetKey(engine->window, GLFW_KEY_E) == GLFW_PRESS) {
         engine->scale += 1.0f * deltaTime;  // Aumentar la escala
