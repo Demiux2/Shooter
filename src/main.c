@@ -8,8 +8,7 @@ int main(void) {
     engine.playerX = -9;
     engine.playerY = 3;
     engine.playerZ = 0;
-    engine.scale = 2;
-    engine.fov = 45;
+    engine.fov = 45.0f;
 
     // Inicializar la ventana y OpenGL
     if (initWindow(&engine) == NULL) {

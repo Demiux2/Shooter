@@ -12,8 +12,7 @@ typedef struct {
     GLFWwindow* window; // Puntero a la ventana
     float playerX, playerY, playerZ; // Posición inicial del jugador
     float angle; // Ángulo de rotación
-    float scale; // Factor de escala
-    int fov;
+    double fov;
 } GameEngine;
 
 // Función para inicializar GLFW y OpenGL
@@ -37,7 +36,7 @@ GLFWwindow* initWindow(GameEngine* engine) {
     glfwSwapInterval(0);  // Deshabilitar V-Sync
 
     // Configuración de la perspectiva
-    engine->fov = 45.0f;  // Ángulo de visión (FOV)
+//    engine->fov = 45.0f;  // Ángulo de visión (FOV)
     glMatrixMode(GL_PROJECTION);   // Seleccionar la matriz de proyección
     glLoadIdentity();              // Limpiar la matriz de proyección actual
     gluPerspective(engine->fov, (float)width / height, 0.1f, 100.0f);  // Configurar perspectiva
@@ -52,6 +51,11 @@ void draw(GameEngine* engine) {
     // Limpiar los buffers de color y profundidad
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Limpiar los dos buffers al principio del ciclo de dibujo
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(engine->fov, (float)width / height, 0.1f, 100.0f);  
+    glMatrixMode(GL_MODELVIEW);    // Volver a la matriz de modelo
+
     // Establecer la cámara con las nuevas coordenadas del jugador
     glLoadIdentity();  // Restablecer la matriz de modelo
     gluLookAt(engine->playerX, engine->playerY, engine->playerZ,  // Posición de la cámara
@@ -60,7 +64,7 @@ void draw(GameEngine* engine) {
 
     // Aplicar la escala 3D a la escena
     glPushMatrix();
-    glScalef(engine->scale, engine->scale, engine->scale);  // Escalar todo en 3D
+    glScalef(2.0f, 2.0f, 2.0f);  // Escalar todo en 3D
 
 
     // Dibuja la pirámide (esfera, cubo o lo que desees en 3D)
@@ -113,11 +117,12 @@ void handleInput(GameEngine* engine, double deltaTime) {
 
     // Modificar la escala
     if (glfwGetKey(engine->window, GLFW_KEY_E) == GLFW_PRESS) {
-        engine->scale += 1.0f * deltaTime;  // Aumentar la escala
+        engine->fov += 2.5f * deltaTime;  // Aumentar el FOV
+        if (engine->fov > 120.0f) engine->fov = 120.0f;  // Limitar la escala máxima
     }
     if (glfwGetKey(engine->window, GLFW_KEY_Q) == GLFW_PRESS) {
-        engine->scale -= 1.0f * deltaTime;  // Reducir la escala
-        if (engine->scale < 0.1f) engine->scale = 0.1f;  // Limitar la escala mínima
+        engine->fov -= 2.5f * deltaTime;  // Reducir el FOV
+        if (engine->fov < 30.0f) engine->fov = 30.0f;  // Limitar la escala mínima
     }
 
     // Salir si se presiona Escape
