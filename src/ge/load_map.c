@@ -107,4 +107,3 @@ int render_map() {
 
     return 0;  // Retorno exitoso
 }
-
