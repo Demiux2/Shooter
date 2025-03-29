@@ -33,6 +33,8 @@ void open_map() {
     int i = 0, j = 0;
     char line[MAX_LINE];
 
+    srand(time(NULL));
+
 while (fgets(line, sizeof(line), map_file) != NULL) {
         // Limpiar salto de línea al final de la línea y otros caracteres no deseados
         line[strcspn(line, "\n")] = 0;  // Eliminar el salto de línea
