@@ -25,8 +25,11 @@ void open_map() {
 
     map_file = fopen("./maps/test2.swnm", "r");
     if(map_file == NULL){
-        printf("Error: could not open the map\n");
-        exit(1);
+        map_file = fopen("./src/maps/test2.swnm", "r");
+        if(map_file == NULL){
+            printf("Error: could not open the map\n");
+            exit(1);
+        }
     }
 
     int line_counter = 1, header_counter = 0, w_quantity;
