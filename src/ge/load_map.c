@@ -23,9 +23,9 @@ void open_map() {
 
     map_loaded = 1;
 
-    map_file = fopen("./maps/test2.swnm", "r");
+    map_file = fopen("./maps/test3.swnm", "r");
     if(map_file == NULL){
-        map_file = fopen("./src/maps/test2.swnm", "r");
+        map_file = fopen("./src/maps/test3.swnm", "r");
         if(map_file == NULL){
             printf("Error: could not open the map\n");
             exit(1);
@@ -106,7 +106,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
                 //Ahora leemos los valores según la cantidad especificada (sw_c)
                 while(spc < sw_c && sscanf(ptr, "%d", &sectors[s_counter][spc]) == 1){
-                    printf("Sector %d: %d\n", spc + 1, sectors[s_counter][spc]);
+                    printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
                     while(*ptr != ' ' && *ptr != '\0'){
                         ptr++;  //Avanza el puntero hasta el siguiente espacio o fin
                     }
@@ -171,7 +171,7 @@ int render_map(){
         glEnd();
 
         //Dibujar el techo
-        glColor3f(0.607f, 0.607f, 0.560f); //"Trout" para el techo
+        glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" para el techo
         glBegin(GL_POLYGON);
         for(int i = 0; i < sw_c; i++){
             int wall_id = sectors[s][i];
