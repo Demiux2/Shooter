@@ -74,7 +74,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX)); //Verde
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX)); //Azul
 
-                printf("Wall %d: (%d, %d, %d, %d) Color: (%f, %f, %f)\n", 
+                printf("Wall %d: (%d, %d; %d, %d) Color: (%f, %f, %f)\n", 
                         w_counter, walls[w_counter][0], walls[w_counter][1], 
                         walls[w_counter][2], walls[w_counter][3],
                         wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
@@ -91,7 +91,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
             char *ptr = line;
             int spc = 0;
             if(sscanf(ptr, "%d", &sw_c) == 1){
-                printf("Number of walls in sector %d: %d\n", sw_c, spc + 1);
+                printf("Number of walls in sector %d: %d\n", spc + 1, sw_c);
                 
                 //Avanzamos el puntero después de leer la cantidad inicial
                 while(*ptr != ' ' && *ptr != '\0'){
