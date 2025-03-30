@@ -7,22 +7,21 @@
 
 int width = 1366, height = 768;
 
-// Definir la estructura del motor de juego
 typedef struct {
-    GLFWwindow* window; // Puntero a la ventana
-    float playerX, playerY, playerZ; // Posición inicial del jugador
-    float angle; // Ángulo de rotación
+    GLFWwindow* window;
+    float playerX, playerY, playerZ;
+    float angle;
     double fov;
 } GameEngine;
 
-// Función para inicializar GLFW y OpenGL
+//Función para inicializar GLFW y OpenGL
 GLFWwindow* initWindow(GameEngine* engine) {
     if (!glfwInit()) {
         return NULL;
     }
 
-    // Asegurémonos de que el doble buffer esté activado
-    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);  // Asegurarnos de usar doble buffer
+    //Activar doble buffer
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
     engine->window = glfwCreateWindow(width, height, "Shooter Without Name", NULL, NULL);
     if (!engine->window) {
@@ -32,102 +31,100 @@ GLFWwindow* initWindow(GameEngine* engine) {
 
     glfwMakeContextCurrent(engine->window);
 
-    // Deshabilitar V-Sync para probar si ayuda (puedes cambiarlo a 1 si prefieres habilitarlo)
-    glfwSwapInterval(0);  // Deshabilitar V-Sync
+    //Deshabilitar V-Sync
+    glfwSwapInterval(0);
 
-    // Configuración de la perspectiva
-//    engine->fov = 45.0f;  // Ángulo de visión (FOV)
-    glMatrixMode(GL_PROJECTION);   // Seleccionar la matriz de proyección
-    glLoadIdentity();              // Limpiar la matriz de proyección actual
-    gluPerspective(engine->fov, (float)width / height, 0.1f, 100.0f);  // Configurar perspectiva
-    glMatrixMode(GL_MODELVIEW);    // Volver a la matriz de modelo
+    //Configuración de la perspectiva
+    glMatrixMode(GL_PROJECTION); //Matriz de proyección
+    glLoadIdentity();            //Limpiar la matriz de proyección actual
+    gluPerspective(engine->fov, (float)width / height, 0.1f, 100.0f); //Configurar perspectiva
+    glMatrixMode(GL_MODELVIEW);  //Volver a la matriz de modelo
 
-    // Activar el test de profundidad
-    glEnable(GL_DEPTH_TEST);  // Asegúrate de tener esto activado
+    //Activar el test de profundidad
+    glEnable(GL_DEPTH_TEST);
 
     return engine->window;
 }
 void draw(GameEngine* engine) {
-    // Limpiar los buffers de color y profundidad
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Limpiar los dos buffers al principio del ciclo de dibujo
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Limpiar los dos buffers al principio del frame
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(engine->fov, (float)width / height, 0.1f, 100.0f);  
-    glMatrixMode(GL_MODELVIEW);    // Volver a la matriz de modelo
+    glMatrixMode(GL_MODELVIEW);
 
-    // Establecer la cámara con las nuevas coordenadas del jugador
-    glLoadIdentity();  // Restablecer la matriz de modelo
-    gluLookAt(engine->playerX, engine->playerY, engine->playerZ,  // Posición de la cámara
-              engine->playerX + cos(engine->angle * 3.14159f / 180.0f), engine->playerY, engine->playerZ + sin(engine->angle * 3.14159f / 180.0f),  // Dirección de la cámara
-              0.0f, 1.0f, 0.0f);  // El "arriba" es el eje Y
+    //Establecer la cámara
+    glLoadIdentity(); //Restablecer la matriz de modelo
+    gluLookAt(engine->playerX, engine->playerY, engine->playerZ, //Posición de la cámara
+              engine->playerX + cos(engine->angle * 3.14159f / 180.0f), engine->playerY, engine->playerZ + sin(engine->angle * 3.14159f / 180.0f), //Ángulo de la cámara
+              0.0f, 1.0f, 0.0f);
 
-    // Aplicar la escala 3D a la escena
+    //Aplicar la escala 3D a la escena
     glPushMatrix();
-    glScalef(2.0f, 2.0f, 2.0f);  // Escalar todo en 3D
+    glScalef(2.0f, 2.0f, 2.0f); //Escalar todo en 3D
 
 
-    // Dibuja la pirámide (esfera, cubo o lo que desees en 3D)
+    //Dibujar mapa
     glBegin(GL_QUADS);
     	render_map();
-    glEnd();  // Finalizar la definición de los triángulos
+    glEnd(); //Finalizar la definición de los triángulos
 
-    glPopMatrix();  // Restaurar la matriz de transformación
+    glPopMatrix(); //Restaurar la matriz de transformación
 
-    // Intercambiar los buffers de la pantalla
-    glfwSwapBuffers(engine->window);  // Intercambia los buffers (esto es crucial)
+    
+    glfwSwapBuffers(engine->window);
 }
 
-// Función para manejar la entrada del jugador
+//Función para manejar el input del jugador
 void handleInput(GameEngine* engine, double deltaTime) {
-    float speed = 10.0f;  // Velocidad de movimiento en unidades por segundo
-    float rotationSpeed = 75.0f;  // Velocidad de rotación en grados por segundo
+    float speed = 10.0f;         //Velocidad de movimiento (unidades por segundo)
+    float rotationSpeed = 75.0f; //Velocidad de rotación   (grados por segundo)
 
-    // Comprobamos las teclas presionadas
+    //Comprobamos las teclas presionadas
     if (glfwGetKey(engine->window, GLFW_KEY_W) == GLFW_PRESS) {
-        engine->playerX += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Mover hacia adelante
+        engine->playerX += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia adelante
         engine->playerZ += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
     if (glfwGetKey(engine->window, GLFW_KEY_S) == GLFW_PRESS) {
-        engine->playerX -= cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Mover hacia atrás
+        engine->playerX -= cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia atrás
         engine->playerZ -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
     if (glfwGetKey(engine->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        engine->angle -= rotationSpeed * deltaTime;  // Rotar hacia la izquierda
+        engine->angle -= rotationSpeed * deltaTime; //Rotar hacia la izquierda
     }
     if (glfwGetKey(engine->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        engine->angle += rotationSpeed * deltaTime;  // Rotar hacia la derecha
+        engine->angle += rotationSpeed * deltaTime; //Rotar hacia la derecha
     }
-    // Movimiento perpendicular
+    //Movimiento perpendicular
     if (glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS) {
-        engine->playerX += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Movimiento a la izquierda
+        engine->playerX += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la izquierda
         engine->playerZ -= cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
     if (glfwGetKey(engine->window, GLFW_KEY_D) == GLFW_PRESS) {
-        engine->playerX -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;  // Movimiento a la derecha
+        engine->playerX -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la derecha
         engine->playerZ += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
     if (glfwGetKey(engine->window, GLFW_KEY_UP) == GLFW_PRESS) {
-        engine->playerY +=  speed * deltaTime;  // Movimiento hacia arriba
+        engine->playerY +=  speed * deltaTime; //Movimiento hacia arriba
     }
     if (glfwGetKey(engine->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        engine->playerY -= speed * deltaTime;  // Movimiento hacia abajo
+        engine->playerY -= speed * deltaTime; //Movimiento hacia abajo
     }
 
 
-    // Modificar la escala
+    //Modificar la escala
     if (glfwGetKey(engine->window, GLFW_KEY_E) == GLFW_PRESS) {
-        engine->fov += 2.5f * deltaTime;  // Aumentar el FOV
-        if (engine->fov > 120.0f) engine->fov = 120.0f;  // Limitar la escala máxima
+        engine->fov += 2.5f * deltaTime; //Aumentar el FOV
+        if (engine->fov > 120.0f) engine->fov = 120.0f; //Limitar la escala máxima
     }
     if (glfwGetKey(engine->window, GLFW_KEY_Q) == GLFW_PRESS) {
-        engine->fov -= 2.5f * deltaTime;  // Reducir el FOV
-        if (engine->fov < 30.0f) engine->fov = 30.0f;  // Limitar la escala mínima
+        engine->fov -= 2.5f * deltaTime; //Reducir el FOV
+        if (engine->fov < 30.0f) engine->fov = 30.0f; //Limitar la escala mínima
     }
 
-    // Salir si se presiona Escape
+    //Salir si se presiona Escape
     if (glfwGetKey(engine->window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine->window)) {
-        glfwSetWindowShouldClose(engine->window, GLFW_TRUE);  // Salir
+        glfwSetWindowShouldClose(engine->window, GLFW_TRUE); //Salir
     }
 }
 
