@@ -10,4 +10,7 @@ For compiling, you have 2 options:
 
 ## Running
 
-Go into src/ and execute `../main`
+For running, you also have 2 options:
+
+1) You can just execute it from the project main folder with `./main`
+2) Go into src/ and execute `../main`
