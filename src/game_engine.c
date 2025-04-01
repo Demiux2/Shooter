@@ -3,7 +3,11 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include <stdio.h>
-//#include "ge/load_map.c"
+#include <string.h>
+#include "./ge/load_map.c"
+#include "./ge/load_map.h"
+
+extern struct p_initial_pos pip;
 
 int width = 1366, height = 768;
 
@@ -20,10 +24,12 @@ GLFWwindow* initWindow(GameEngine* engine) {
         return NULL;
     }
 
+    strcat(pip.map_name, " - Shooter Without Name");
+
     //Activar doble buffer
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
-    engine->window = glfwCreateWindow(width, height, "Shooter Without Name", NULL, NULL);
+    engine->window = glfwCreateWindow(width, height, pip.map_name, NULL, NULL);
     if (!engine->window) {
         glfwTerminate();
         return NULL;

@@ -2,19 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "load_map.h"
 
 #define MAX_LINE 256
 
-struct p_initial_pos{
+extern struct p_initial_pos pip;
 
-    float pX, pY, pZ, pA;
-
-};
-
-struct p_initial_pos pip;
+char path1[125] = "./maps/";
+char path2[125] = "./src/maps/";
 
 FILE *map_file;
-char map_name[100] = {0};
 int walls[2048][4] = {0}, sectors[1024][1024] = {0};
 int w_mats[2048], w_mat = 0, sw_c = 0;
 float wall_colors[2048][3];
@@ -28,11 +25,15 @@ void open_map() {
         return;
     }
 
+    strcpy(pip.map, "test3.swnm");
+    strcat(path1, pip.map);
+    strcat(path2, pip.map);
+
     map_loaded = 1;
 
-    map_file = fopen("./maps/test3.swnm", "r");
+    map_file = fopen(path1, "r");
     if(map_file == NULL){
-        map_file = fopen("./src/maps/test3.swnm", "r");
+        map_file = fopen(path2, "r");
         if(map_file == NULL){
             printf("Error: could not open the map\n");
             exit(1);
@@ -51,9 +52,9 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         line[strcspn(line, "\r")] = 0;  //Eliminar el retorno de carro si existe
 
         if(line_counter == 1){
-            sscanf(line, "%s", map_name);  //El nombre del mapa
-            strcpy(map_name, line);
-            printf("Map name: %s\n", map_name);
+            sscanf(line, "%s", pip.map_name);  //El nombre del mapa
+            strcpy(pip.map_name, line);
+            printf("Map name: %s\n", pip.map_name);
         }
 
         if(line_counter == 2){
@@ -148,10 +149,10 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 int render_map(){
 
     for(int i = 0; i < w_counter; i++){
-        //Asignar el color previamente calculado de la &pip->pAred
+        //Asignar el color previamente calculado de la pared
         glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
 
-        //Dibujar la &pip->pAred
+        //Dibujar la pared
         glBegin(GL_QUADS);
             glVertex3f(walls[i][0], 0, walls[i][1]);
             glVertex3f(walls[i][0], 5, walls[i][1]);
@@ -165,10 +166,10 @@ int render_map(){
         float ceiling_height = sectors[s][sw_c + 2];
 
         //Dibujar el piso
-        glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" &pip->pAra el piso
+        glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" para el piso
         glBegin(GL_POLYGON);
         for(int i = 0; i < sw_c; i++){
-            int wall_id = sectors[s][i];  //ID de la &pip->pAred
+            int wall_id = sectors[s][i];  //ID de la pared
             int x1 = walls[wall_id][0];
             int y1 = walls[wall_id][1];
 
