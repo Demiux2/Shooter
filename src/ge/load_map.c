@@ -59,7 +59,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
         if(line_counter == 2){
             if(sscanf(line, "%f %f %f %f", &pip.pX, &pip.pY, &pip.pZ, &pip.pA) != 4){
-                printf("Error: Incorrect amount of player &pip->pArameters (at line 2)\n");
+                printf("Error: Incorrect amount of player parameters (at line 2)\n");
                 exit(1);
             }
             line_counter++;
@@ -80,7 +80,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         //Procesar [WALLS]
         if(header_counter == 1){
             if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mat) == 5){
-                //Generación de color aleatorio &pip->pAra cada &pip->pAred
+                //Generación de color aleatorio para cada pared
                 wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX)); //Rojo
                 wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX)); //Verde
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX)); //Azul
@@ -106,20 +106,20 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 
                 //Avanzamos el puntero después de leer la cantidad inicial
                 while(*ptr != ' ' && *ptr != '\0'){
-                    ptr++;  //Avanzamos hasta el primer es&pip->pAcio o fin de cadena
+                    ptr++;  //Avanzamos hasta el primer espacio o fin de cadena
                 }
                 if(*ptr == ' '){
-                    ptr++;  //Mueve el puntero al siguiente valor después del es&pip->pAcio
+                    ptr++;  //Mueve el puntero al siguiente valor después del espacio
                 }
 
                 //Ahora leemos los valores según la cantidad especificada (sw_c)
                 while(spc < sw_c && sscanf(ptr, "%d", &sectors[s_counter][spc]) == 1){
                     printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
                     while(*ptr != ' ' && *ptr != '\0'){
-                        ptr++;  //Avanza el puntero hasta el siguiente es&pip->pAcio o fin
+                        ptr++;  //Avanza el puntero hasta el siguiente espacio o fin
                     }
                     if(*ptr == ' '){
-                        ptr++;  //Mueve el puntero después del es&pip->pAcio
+                        ptr++;  //Mueve el puntero después del espacio
                     }
                     spc++;
                 }
@@ -127,8 +127,8 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 //Leer floor_height, floor_mat, ceiling_height y ceiling_mat
                 for(int i = 0; i < 4; i++){
                     if(sscanf(ptr, "%d", &sectors[s_counter][sw_c + i]) == 1){
-                        ptr = strchr(ptr, ' ');  //Avanza al siguiente es&pip->pAcio
-                        if(ptr) ptr++;  //Mueve el puntero después del es&pip->pAcio
+                        ptr = strchr(ptr, ' ');  //Avanza al siguiente espacio
+                        if(ptr) ptr++;  //Mueve el puntero después del espacio
                     }
                     else{
                         break;
@@ -179,7 +179,7 @@ int render_map(){
         glEnd();
 
         //Dibujar el techo
-        glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" &pip->pAra el techo
+        glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" para el techo
         glBegin(GL_POLYGON);
         for(int i = 0; i < sw_c; i++){
             int wall_id = sectors[s][i];

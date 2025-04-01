@@ -14,6 +14,7 @@ int main(void) {
     engine.playerX = pip.pX;
     engine.playerY = pip.pY;
     engine.playerZ = pip.pZ;
+    engine.angle = pip.pA;
 
     if (initWindow(&engine) == NULL) {
         return -1;
