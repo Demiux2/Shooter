@@ -3,11 +3,13 @@
 #include "game_engine.c"
 #include "./ge/load_map.c"
 
+extern struct p_initial_pos pip;
+
 int main(void) {
     GameEngine engine = {0};
-    engine.playerX = -9;
+    /*engine.playerX = -9;
     engine.playerY = 3;
-    engine.playerZ = 0;
+    engine.playerZ = 0;*/
     engine.fov = 45.0f;
 
     if (initWindow(&engine) == NULL) {
@@ -22,6 +24,11 @@ int main(void) {
     double deltaTime = 0.0;
 
     open_map();
+
+    engine.playerX = pip.pX;
+    engine.playerY = pip.pY;
+    engine.playerZ = pip.pZ;
+
 
     //Bucle principal
     while (!glfwWindowShouldClose(engine.window)) {

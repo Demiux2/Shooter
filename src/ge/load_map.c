@@ -5,9 +5,16 @@
 
 #define MAX_LINE 256
 
+struct p_initial_pos{
+
+    float pX, pY, pZ, pA;
+
+};
+
+struct p_initial_pos pip;
+
 FILE *map_file;
 char map_name[100] = {0};
-float pX, pY, pZ, pA;
 int walls[2048][4] = {0}, sectors[1024][1024] = {0};
 int w_mats[2048], w_mat = 0, sw_c = 0;
 float wall_colors[2048][3];
@@ -50,8 +57,8 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         }
 
         if(line_counter == 2){
-            if(sscanf(line, "%f %f %f %f", &pX, &pY, &pZ, &pA) != 4){
-                printf("Error: Incorrect amount of player parameters (at line 2)\n");
+            if(sscanf(line, "%f %f %f %f", &pip.pX, &pip.pY, &pip.pZ, &pip.pA) != 4){
+                printf("Error: Incorrect amount of player &pip->pArameters (at line 2)\n");
                 exit(1);
             }
             line_counter++;
@@ -72,7 +79,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         //Procesar [WALLS]
         if(header_counter == 1){
             if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mat) == 5){
-                //Generación de color aleatorio para cada pared
+                //Generación de color aleatorio &pip->pAra cada &pip->pAred
                 wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX)); //Rojo
                 wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX)); //Verde
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX)); //Azul
@@ -98,20 +105,20 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 
                 //Avanzamos el puntero después de leer la cantidad inicial
                 while(*ptr != ' ' && *ptr != '\0'){
-                    ptr++;  //Avanzamos hasta el primer espacio o fin de cadena
+                    ptr++;  //Avanzamos hasta el primer es&pip->pAcio o fin de cadena
                 }
                 if(*ptr == ' '){
-                    ptr++;  //Mueve el puntero al siguiente valor después del espacio
+                    ptr++;  //Mueve el puntero al siguiente valor después del es&pip->pAcio
                 }
 
                 //Ahora leemos los valores según la cantidad especificada (sw_c)
                 while(spc < sw_c && sscanf(ptr, "%d", &sectors[s_counter][spc]) == 1){
                     printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
                     while(*ptr != ' ' && *ptr != '\0'){
-                        ptr++;  //Avanza el puntero hasta el siguiente espacio o fin
+                        ptr++;  //Avanza el puntero hasta el siguiente es&pip->pAcio o fin
                     }
                     if(*ptr == ' '){
-                        ptr++;  //Mueve el puntero después del espacio
+                        ptr++;  //Mueve el puntero después del es&pip->pAcio
                     }
                     spc++;
                 }
@@ -119,8 +126,8 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 //Leer floor_height, floor_mat, ceiling_height y ceiling_mat
                 for(int i = 0; i < 4; i++){
                     if(sscanf(ptr, "%d", &sectors[s_counter][sw_c + i]) == 1){
-                        ptr = strchr(ptr, ' ');  //Avanza al siguiente espacio
-                        if(ptr) ptr++;  //Mueve el puntero después del espacio
+                        ptr = strchr(ptr, ' ');  //Avanza al siguiente es&pip->pAcio
+                        if(ptr) ptr++;  //Mueve el puntero después del es&pip->pAcio
                     }
                     else{
                         break;
@@ -141,10 +148,10 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 int render_map(){
 
     for(int i = 0; i < w_counter; i++){
-        //Asignar el color previamente calculado de la pared
+        //Asignar el color previamente calculado de la &pip->pAred
         glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
 
-        //Dibujar la pared
+        //Dibujar la &pip->pAred
         glBegin(GL_QUADS);
             glVertex3f(walls[i][0], 0, walls[i][1]);
             glVertex3f(walls[i][0], 5, walls[i][1]);
@@ -158,10 +165,10 @@ int render_map(){
         float ceiling_height = sectors[s][sw_c + 2];
 
         //Dibujar el piso
-        glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" para el piso
+        glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" &pip->pAra el piso
         glBegin(GL_POLYGON);
         for(int i = 0; i < sw_c; i++){
-            int wall_id = sectors[s][i];  //ID de la pared
+            int wall_id = sectors[s][i];  //ID de la &pip->pAred
             int x1 = walls[wall_id][0];
             int y1 = walls[wall_id][1];
 
@@ -171,7 +178,7 @@ int render_map(){
         glEnd();
 
         //Dibujar el techo
-        glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" para el techo
+        glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" &pip->pAra el techo
         glBegin(GL_POLYGON);
         for(int i = 0; i < sw_c; i++){
             int wall_id = sectors[s][i];
