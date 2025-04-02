@@ -47,7 +47,7 @@ int main(void){
 
         // Imprimir los FPS cada segundo
         if (currentTime - frameStartTime >= 1.0) {
-            printf("%f fps\n", 1000.0 / (1000.0 / frame_counter)); // Calcular fps (para ms/frame es 1000/frame_counter)
+            printf("%.0f fps\n", (double)(1000.0 / (1000.0 / frame_counter))); // Calcular fps (para ms/frame es 1000/frame_counter)
             frame_counter = 0; // Reiniciar el contador de cuadros
             frameStartTime = currentTime; // Actualizar el tiempo para el siguiente segundo
         }
