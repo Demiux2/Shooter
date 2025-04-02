@@ -5,7 +5,7 @@
 
 extern struct p_initial_pos pip;
 
-int main(void) {
+int main(void){
 
     open_map();
 
@@ -16,7 +16,7 @@ int main(void) {
     engine.playerZ = pip.pZ;
     engine.angle = pip.pA;
 
-    if (initWindow(&engine) == NULL) {
+    if (initWindow(&engine) == NULL){
         return -1;
     }
 
@@ -24,23 +24,35 @@ int main(void) {
     glfwGetFramebufferSize(engine.window, &framebufferWidth, &framebufferHeight);
     glViewport(0, 0, framebufferWidth, framebufferHeight); //Establecer el tamaño del área de renderizado
 
-    double lastTime = 0.0;
+    double lastTime = glfwGetTime(); // Inicializar lastTime al tiempo actual
     double deltaTime = 0.0;
+    double frame_counter = 0;
+    double frameStartTime = lastTime; // Variable para controlar el paso de 1 segundo
 
-    //Bucle principal
+    // Bucle principal
     while (!glfwWindowShouldClose(engine.window)) {
-
         double currentTime = glfwGetTime();
+
+        // Calcular deltaTime (el tiempo que pasó desde el último cuadro)
         deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        handleInput(&engine, deltaTime);
-        draw(&engine);
+        lastTime = currentTime; // Actualizar lastTime con el tiempo actual
+
+        frame_counter += 1.0; // Incrementar el contador de cuadros
+
+        handleInput(&engine, deltaTime); // Pasar deltaTime para el manejo de la entrada
+        draw(&engine); // Dibujar la escena
 
         glfwSwapBuffers(engine.window);
         glfwPollEvents();
+
+        // Imprimir los FPS cada segundo
+        if (currentTime - frameStartTime >= 1.0) {
+            printf("%f fps\n", 1000.0 / (1000.0 / frame_counter)); // Calcular fps (para ms/frame es 1000/frame_counter)
+            frame_counter = 0; // Reiniciar el contador de cuadros
+            frameStartTime = currentTime; // Actualizar el tiempo para el siguiente segundo
+        }
     }
 
     glfwTerminate();
     return 0;
 }
-
