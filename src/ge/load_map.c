@@ -25,7 +25,7 @@ void open_map() {
         return;
     }
 
-    strcpy(pip.map, "test3.swnm");
+    strcpy(pip.map, pip.filename);
     strcat(path1, pip.map);
     strcat(path2, pip.map);
 

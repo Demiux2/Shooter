@@ -9,7 +9,11 @@ extern struct p_initial_pos pip;
 int main(int argc, char *argv[]){
 
     int fflag = 0;
+    printf("%i\n",argc);
     for(int i = 1; i < argc; i++){
+	if(i == 1){
+	    strcpy(pip.filename, argv[i]);
+	}
         if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[1], "--fps") == 0)){
 	    fflag = 1;
         }

@@ -3,7 +3,7 @@
 
 struct p_initial_pos{
     float pX, pY, pZ, pA;
-    char map[200], map_name[256];
+    char map[200], map_name[256], filename[256];
 };
 
 struct p_initial_pos pip;
