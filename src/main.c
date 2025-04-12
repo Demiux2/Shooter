@@ -1,11 +1,19 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <string.h>
 #include "game_engine.c"
 #include "./ge/load_map.h"
 
 extern struct p_initial_pos pip;
 
-int main(void){
+int main(int argc, char *argv[]){
+
+    int fflag = 0;
+    for(int i = 1; i < argc; i++){
+        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[1], "--fps") == 0)){
+	    fflag = 1;
+        }
+    }
 
     open_map();
 
@@ -46,7 +54,7 @@ int main(void){
         glfwPollEvents();
 
         // Imprimir los FPS cada segundo
-        if (currentTime - frameStartTime >= 1.0) {
+        if ((currentTime - frameStartTime >= 1.0) && (fflag == 1)){
             printf("%.0f fps\n", (double)(1000.0 / (1000.0 / frame_counter))); // Calcular fps (para ms/frame es 1000/frame_counter)
             frame_counter = 0; // Reiniciar el contador de cuadros
             frameStartTime = currentTime; // Actualizar el tiempo para el siguiente segundo
