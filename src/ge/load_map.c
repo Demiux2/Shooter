@@ -52,6 +52,10 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         line[strcspn(line, "\n")] = 0;
         line[strcspn(line, "\r")] = 0;
 
+        if(line[0] == '\0'){
+            continue; // línea vacía, la saltamos
+        }
+
         if(line_counter == 1){
             sscanf(line, "%s", pip.map_name);
             strcpy(pip.map_name, line);
@@ -85,6 +89,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
         //Procesar [WALLS]
         if(header_counter == 1){
+
             if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mat) == 5){
                 wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX));
                 wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX));
