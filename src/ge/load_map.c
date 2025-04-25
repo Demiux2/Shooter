@@ -3,10 +3,12 @@
 #include <string.h>
 #include <time.h>
 #include "load_map.h"
+#include "../main.h"
 
 #define MAX_LINE 256
 
 extern struct p_initial_pos pip;
+extern struct flagstruct flags;
 
 char path1[125] = "./maps/";
 char path2[125] = "./src/maps/";
@@ -47,14 +49,14 @@ void open_map() {
     srand(time(NULL));
 
 while(fgets(line, sizeof(line), map_file) != NULL){
-        //Limpiar salto de línea al final de la línea y otros caracteres no deseados
-        line[strcspn(line, "\n")] = 0;  //Eliminar el salto de línea
-        line[strcspn(line, "\r")] = 0;  //Eliminar el retorno de carro si existe
+        line[strcspn(line, "\n")] = 0;
+        line[strcspn(line, "\r")] = 0;
 
         if(line_counter == 1){
-            sscanf(line, "%s", pip.map_name);  //El nombre del mapa
+            sscanf(line, "%s", pip.map_name);
             strcpy(pip.map_name, line);
-            printf("Map name: %s\n", pip.map_name);
+            if(flags.dflag)
+		    printf("Map name: %s\n", pip.map_name);
         }
 
         if(line_counter == 2){
@@ -66,13 +68,17 @@ while(fgets(line, sizeof(line), map_file) != NULL){
             continue;
         }
 
-        //Detectar encabezados de secciones
         if(strcmp(line, "[WALLS]") == 0){
-            printf("Reading [WALLS]\n");
+	    if(flags.dflag)
+                printf("Reading [WALLS]\n");
+
             header_counter = 1;
             continue;
         }
         if(strcmp(line, "[SECTORS]") == 0){
+	if(flags.dflag)
+		printf("Reading [SECTORS]\n");
+
             header_counter = 2;
             continue;
         }
@@ -80,15 +86,16 @@ while(fgets(line, sizeof(line), map_file) != NULL){
         //Procesar [WALLS]
         if(header_counter == 1){
             if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mat) == 5){
-                //Generación de color aleatorio para cada pared
-                wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX)); //Rojo
-                wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX)); //Verde
-                wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX)); //Azul
+                wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX));
+                wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX));
+                wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
 
-                printf("Wall %d: (%d, %d; %d, %d) Color: (%f, %f, %f)\n", 
-                        w_counter, walls[w_counter][0], walls[w_counter][1], 
-                        walls[w_counter][2], walls[w_counter][3],
-                        wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
+		if(flags.dflag)
+                	printf("Wall %d: (%d, %d; %d, %d) Color: (%f, %f, %f)\n", 
+                        	w_counter, walls[w_counter][0], walls[w_counter][1], 
+                        	walls[w_counter][2], walls[w_counter][3],
+                        	wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
+
                 w_counter++;
             }
 
@@ -102,24 +109,26 @@ while(fgets(line, sizeof(line), map_file) != NULL){
             char *ptr = line;
             int spc = 0;
             if(sscanf(ptr, "%d", &sw_c) == 1){
-                printf("Number of walls in sector %d: %d\n", spc + 1, sw_c);
+
+		if(flags.dflag)
+                	printf("Number of walls in sector %d: %d\n", spc + 1, sw_c);
                 
-                //Avanzamos el puntero después de leer la cantidad inicial
                 while(*ptr != ' ' && *ptr != '\0'){
-                    ptr++;  //Avanzamos hasta el primer espacio o fin de cadena
+                    ptr++;
                 }
                 if(*ptr == ' '){
-                    ptr++;  //Mueve el puntero al siguiente valor después del espacio
+                    ptr++;
                 }
 
-                //Ahora leemos los valores según la cantidad especificada (sw_c)
                 while(spc < sw_c && sscanf(ptr, "%d", &sectors[s_counter][spc]) == 1){
-                    printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
+		    if(flags.dflag)
+                    	printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
+
                     while(*ptr != ' ' && *ptr != '\0'){
-                        ptr++;  //Avanza el puntero hasta el siguiente espacio o fin
+                        ptr++;
                     }
                     if(*ptr == ' '){
-                        ptr++;  //Mueve el puntero después del espacio
+                        ptr++;
                     }
                     spc++;
                 }
@@ -127,8 +136,8 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 //Leer floor_height, floor_mat, ceiling_height y ceiling_mat
                 for(int i = 0; i < 4; i++){
                     if(sscanf(ptr, "%d", &sectors[s_counter][sw_c + i]) == 1){
-                        ptr = strchr(ptr, ' ');  //Avanza al siguiente espacio
-                        if(ptr) ptr++;  //Mueve el puntero después del espacio
+                        ptr = strchr(ptr, ' ');
+                        if(ptr) ptr++;
                     }
                     else{
                         break;
@@ -149,7 +158,6 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 int render_map(){
 
     for(int i = 0; i < w_counter; i++){
-        //Asignar el color previamente calculado de la pared
         glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
 
         //Dibujar la pared
