@@ -74,14 +74,14 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
         if(strcmp(line, "[WALLS]") == 0){
 	    if(flags.dflag)
-                printf("Reading [WALLS]\n");
+                printf("\nReading [WALLS]:\n");
 
             header_counter = 1;
             continue;
         }
         if(strcmp(line, "[SECTORS]") == 0){
 	if(flags.dflag)
-		printf("Reading [SECTORS]\n");
+		printf("\nReading [SECTORS]:\n");
 
             header_counter = 2;
             continue;
@@ -96,7 +96,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
 
 		if(flags.dflag)
-                	printf("Wall %d: (%d, %d; %d, %d) Color: (%f, %f, %f)\n", 
+                	printf("Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
                         	w_counter, walls[w_counter][0], walls[w_counter][1], 
                         	walls[w_counter][2], walls[w_counter][3],
                         	wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
