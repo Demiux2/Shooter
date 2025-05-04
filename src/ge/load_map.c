@@ -60,7 +60,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
             sscanf(line, "%s", pip.map_name);
             strcpy(pip.map_name, line);
             if(flags.dflag)
-		    printf("Map name: %s\n", pip.map_name);
+		    printf("[DEBUG] Map name: %s\n", pip.map_name);
         }
 
         if(line_counter == 2){
@@ -74,14 +74,14 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
         if(strcmp(line, "[WALLS]") == 0){
 	    if(flags.dflag)
-                printf("\nReading [WALLS]:\n");
+                printf("\n[DEBUG] Reading \"[WALLS]\":\n");
 
             header_counter = 1;
             continue;
         }
         if(strcmp(line, "[SECTORS]") == 0){
 	if(flags.dflag)
-		printf("\nReading [SECTORS]:\n");
+		printf("\n[DEBUG] Reading \"[SECTORS]\":\n");
 
             header_counter = 2;
             continue;
@@ -96,7 +96,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
 
 		if(flags.dflag)
-                	printf("Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
+                	printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
                         	w_counter, walls[w_counter][0], walls[w_counter][1], 
                         	walls[w_counter][2], walls[w_counter][3],
                         	wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
@@ -116,7 +116,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
             if(sscanf(ptr, "%d", &sw_c) == 1){
 
 		if(flags.dflag)
-                	printf("Number of walls in sector %d: %d\n", spc + 1, sw_c);
+                	printf("[DEBUG] Number of walls in sector %d: %d\n", spc + 1, sw_c);
                 
                 while(*ptr != ' ' && *ptr != '\0'){
                     ptr++;
@@ -127,7 +127,7 @@ while(fgets(line, sizeof(line), map_file) != NULL){
 
                 while(spc < sw_c && sscanf(ptr, "%d", &sectors[s_counter][spc]) == 1){
 		    if(flags.dflag)
-                    	printf("Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
+                    	printf("[DEBUG] Wall ID %d: %d\n", spc + 1, sectors[s_counter][spc]);
 
                     while(*ptr != ' ' && *ptr != '\0'){
                         ptr++;
