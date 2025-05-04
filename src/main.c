@@ -10,6 +10,11 @@ extern struct flagstruct flags;
 
 int main(int argc, char *argv[]){
 
+    if(argv[1] == NULL){
+	    printf("Error: You must include a map filename and any optional flags you want.\n");
+	    return 1;
+    }
+
     for(int i = 1; i < argc; i++){
 	if(i == 1){
 	    strcpy(pip.filename, argv[i]);
