@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
 	    strcpy(pip.filename, argv[i]);
 	}
 
-        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[1], "--fps") == 0)){
+        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)){
 	    flags.fflag = 1;
         }
 	else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0)){
