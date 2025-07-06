@@ -6,6 +6,8 @@
 #include "../main.h"
 
 #define MAX_LINE 256
+#define MAX_WALLS 2048
+#define MAX_SECTORS 1024
 
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
@@ -14,9 +16,9 @@ char path1[125] = "./maps/";
 char path2[125] = "./src/maps/";
 
 FILE *map_file;
-int walls[2048][4] = {0}, sectors[1024][1024] = {0};
-int w_mats[2048] = {0}, w_mat = 0, sw_c = 0;
-float wall_colors[2048][3] = {0};
+int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_SECTORS] = {0};
+int w_mats[MAX_WALLS] = {0}, w_mat = 0, sw_c = 0;
+float wall_colors[MAX_WALLS][3] = {0};
 
 int w_counter = 0, s_counter = 0;
 
@@ -152,7 +154,10 @@ void open_map(){
 
 int render_map(){
     for(int i = 0; i < w_counter; i++){
-        glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
+	if(w_mats[i] == 0)
+            glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
+	else
+	    glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]); //TODO: Temporal hasta que se implementen las texturas
 
         //Dibujar la pared
         glBegin(GL_QUADS);
