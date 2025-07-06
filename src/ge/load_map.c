@@ -4,6 +4,7 @@
 #include <time.h>
 #include "load_map.h"
 #include "../main.h"
+#include "minmax.h"
 
 #define MAX_LINE 256
 #define MAX_WALLS 2048
@@ -45,7 +46,6 @@ void open_map(){
     }
 
     int line_counter = 1, header_counter = 0, w_quantity;
-    //int i = 0, j = 0;
     char line[MAX_LINE];
 
     srand(time(NULL));
@@ -93,10 +93,11 @@ void open_map(){
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
 
 		    if(flags.dflag)
-                printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
-                    w_counter, walls[w_counter][0], walls[w_counter][1], 
-                    walls[w_counter][2], walls[w_counter][3],
-                    wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
+                        printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
+                            w_counter, walls[w_counter][0], walls[w_counter][1], 
+                            walls[w_counter][2], walls[w_counter][3],
+                            wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
+
                 w_counter++;
             }
         else printf("Error: Invalid wall format in line: %s\n", line);
@@ -125,7 +126,7 @@ void open_map(){
                         printf("%d", sectors[s_counter][i]);
                         if(i < wall_count)
                             printf(", ");
-                        }
+                    }
 
                     while(*ptr != ' ' && *ptr != '\0') ptr++;
                     if(*ptr == ' ') ptr++;
