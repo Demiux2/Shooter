@@ -11,21 +11,18 @@ extern struct flagstruct flags;
 int main(int argc, char *argv[]){
 
     if(argv[1] == NULL){
-	    printf("Error: You must include a map filename and any optional flags you want.\n");
-	    return 1;
+        printf("Error: You must include a map filename and any optional flags you want.\n");
+	return 1;
     }
 
     for(int i = 1; i < argc; i++){
-	if(i == 1){
+        if(i == 1)
 	    strcpy(pip.filename, argv[i]);
-	}
 
-        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)){
-	    flags.fflag = 1;
-        }
-	else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0)){
-	    flags.dflag = 1;
-	}
+        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0))
+            flags.fflag = 1;
+	else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0))
+            flags.dflag = 1;
     }
 
     open_map();
@@ -43,34 +40,32 @@ int main(int argc, char *argv[]){
 
     int framebufferWidth, framebufferHeight;
     glfwGetFramebufferSize(engine.window, &framebufferWidth, &framebufferHeight);
-    glViewport(0, 0, framebufferWidth, framebufferHeight); //Establecer el tamaño del área de renderizado
+    glViewport(0, 0, framebufferWidth, framebufferHeight);
 
-    double lastTime = glfwGetTime(); // Inicializar lastTime al tiempo actual
+    double lastTime = glfwGetTime();
     double deltaTime = 0.0;
-    double frame_counter = 0;
-    double frameStartTime = lastTime; // Variable para controlar el paso de 1 segundo
+    int frame_counter = 0;
+    double frameStartTime = lastTime;
 
-    // Bucle principal
     while (!glfwWindowShouldClose(engine.window)) {
         double currentTime = glfwGetTime();
 
-        // Calcular deltaTime (el tiempo que pasó desde el último cuadro)
+        //Calcular deltaTime
         deltaTime = currentTime - lastTime;
-        lastTime = currentTime; // Actualizar lastTime con el tiempo actual
+        lastTime = currentTime;
 
-        frame_counter += 1.0; // Incrementar el contador de cuadros
+        frame_counter += 1;
 
-        handleInput(&engine, deltaTime); // Pasar deltaTime para el manejo de la entrada
-        draw(&engine); // Dibujar la escena
+        handleInput(&engine, deltaTime);
+        draw(&engine);
 
         glfwSwapBuffers(engine.window);
         glfwPollEvents();
 
-        // Imprimir los FPS cada segundo
-        if ((currentTime - frameStartTime >= 1.0) && (flags.fflag == 1)){
-            printf("%.0f fps\n", (double)(1000.0 / (1000.0 / frame_counter))); // Calcular fps (para ms/frame es 1000/frame_counter)
-            frame_counter = 0; // Reiniciar el contador de cuadros
-            frameStartTime = currentTime; // Actualizar el tiempo para el siguiente segundo
+        if ((currentTime - frameStartTime >= 1.0) && flags.fflag){
+            printf("%.0f fps\n", (double)(1000.0 / (1000.0 / frame_counter))); //Calcular fps (para ms/frame es 1000/frame_counter)
+            frame_counter = 0;
+            frameStartTime = currentTime;
         }
     }
 

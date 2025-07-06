@@ -28,6 +28,8 @@ void open_map(){
     strcpy(pip.map, pip.filename);
     strcat(path1, pip.map);
     strcat(path2, pip.map);
+    strcat(pip.map, ".swnm");
+    printf("%s, %s, %s\n", pip.map, pip.filename, strcat(pip.map, ".swnm"));
 
     map_loaded = 1;
 
