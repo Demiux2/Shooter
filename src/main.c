@@ -12,29 +12,54 @@ int main(int argc, char *argv[]){
 
     if(argv[1] == NULL){
         printf("Error: You must include a map filename and any optional flags you want.\n");
-	return 1;
+    return 1;
     }
 
     for(int i = 1; i < argc; i++){
         if(i == 1)
-	    strcpy(pip.filename, argv[i]);
+        strcpy(pip.filename, argv[i]);
 
         if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0))
             flags.fflag = 1;
-	else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0))
+    else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0))
             flags.dflag = 1;
     }
 
+    GameEngine engine = {0};
+
+    FILE* config_file = fopen("./config.txt", "r");
+    char line[64] = {0};
+    int i = 0;
+    if(config_file == NULL){
+        printf("Configuration file \"config.txt\" not found, using default values instead.\n");
+        engine.fov = 45.0f;
+    }
+    else{
+        while(fgets(line, sizeof(line), config_file) != NULL){
+            i++;
+            line[strcspn(line, "\n")] = 0;
+            if(i == 1);
+            else if(i == 2);
+            else if(i == 3){
+                if(sscanf(line, "%lf", &engine.fov) != 1){
+                    printf("Incorrect amount of arguments in line %d, using default FOV instead.\n", i+1);
+                    engine.fov = 45.0f;
+                }
+            }
+        }
+        fclose(config_file);
+    }
+
+    printf("FOV: %lf\n", engine.fov);
+
     open_map();
 
-    GameEngine engine = {0};
-    engine.fov = 45.0f;
     engine.playerX = pip.pX;
     engine.playerY = pip.pY;
     engine.playerZ = pip.pZ;
     engine.angle = pip.pA;
 
-    if (initWindow(&engine) == NULL){
+    if(initWindow(&engine) == NULL){
         return -1;
     }
 
