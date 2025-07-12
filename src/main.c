@@ -7,6 +7,7 @@
 
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
+extern struct player_config player_conf;
 
 int main(int argc, char *argv[]){
 
@@ -38,14 +39,35 @@ int main(int argc, char *argv[]){
         while(fgets(line, sizeof(line), config_file) != NULL){
             i++;
             line[strcspn(line, "\n")] = 0;
-            if(i == 1);
-            else if(i == 2);
+            if(i == 1){
+                fgets(line, sizeof(line), config_file);
+                strcpy(player_conf.player_name, line);
+            }
+            else if(i == 2){
+                if(sscanf(line, "%ls", &player_conf.language_id) != 1){
+                    printf("Incorrect amount of parameters or wrong format in line %d, using default language instead.\n", i+1);
+		    strcpy(player_conf.language_id, "en");
+                }
+            }
             else if(i == 3){
                 if(sscanf(line, "%lf", &engine.fov) != 1){
-                    printf("Incorrect amount of arguments in line %d, using default FOV instead.\n", i+1);
+                    printf("Incorrect amount of parameters or wrong format in line %d, using default FOV instead.\n", i+1);
                     engine.fov = 45.0f;
                 }
             }
+            else if(i == 4){
+                if(sscanf(line, "%d %d", &player_conf.res_x, &player_conf.res_y) != 2){
+                    printf("Incorrect amount of parameters or wrong format in line %d, using default resolution instead.\n", i+1);
+                    player_conf.res_x = 1366;
+                    player_conf.res_y = 768;
+                }
+	    }
+	    else if(i == 5){
+                if(sscanf(line, "%ls", &player_conf.fullscreen) != 1){
+                    printf("Incorrect amount of parameteres or wrong format in line %d, using default fullscreen mode instead.\n", i+1);
+                    player_conf.fullscreen = 1;
+                }
+	    }
         }
         fclose(config_file);
     }
