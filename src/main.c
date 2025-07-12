@@ -28,22 +28,26 @@ int main(int argc, char *argv[]){
 
     GameEngine engine = {0};
 
-    FILE* config_file = fopen("./config.txt", "r");
+    FILE* config_file = fopen("./config.txt", "r"); //Se lee el archivo de configuración
     char line[64] = {0};
     if(config_file == NULL){
         printf("Configuration file \"config.txt\" not found, using default values instead.\n");
+        strcpy(player_conf.player_name, "Username");
         strcpy(player_conf.language_id, "en");
         engine.fov = 45.0f;
         player_conf.res_x = 1366;
         player_conf.res_y = 768;
         player_conf.fullscreen = 1;
     }
-    else{
+    else{ //Se guardan las configuraciones del jugador
         for(int i = 1; i <= 5 && fgets(line, sizeof(line), config_file) != NULL; i++){
             line[strcspn(line, "\n")] = 0;
             switch(i){
                 case 1:
-                    strcpy(player_conf.player_name, line);
+                    if(strcpy(player_conf.player_name, line) == NULL){
+                        printf("Could not read line %d, using default player name.\n", i);
+                        strcpy(player_conf.player_name, "Username");
+                    }
                     break;
                 case 2:
                     if(sscanf(line, "%s", player_conf.language_id) != 1){
