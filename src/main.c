@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
                 strcpy(player_conf.player_name, line);
             }
             else if(i == 2){
-                if(sscanf(line, "%ls", &player_conf.language_id) != 1){
+                if(sscanf(line, "%s", player_conf.language_id) != 1){
                     printf("Incorrect amount of parameters or wrong format in line %d, using default language instead.\n", i+1);
 		    strcpy(player_conf.language_id, "en");
                 }
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
                 }
 	    }
 	    else if(i == 5){
-                if(sscanf(line, "%ls", &player_conf.fullscreen) != 1){
+                if(sscanf(line, "%d", &player_conf.fullscreen) != 1){
                     printf("Incorrect amount of parameteres or wrong format in line %d, using default fullscreen mode instead.\n", i+1);
                     player_conf.fullscreen = 1;
                 }
