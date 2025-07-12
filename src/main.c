@@ -30,49 +30,60 @@ int main(int argc, char *argv[]){
 
     FILE* config_file = fopen("./config.txt", "r");
     char line[64] = {0};
-    int i = 0;
     if(config_file == NULL){
         printf("Configuration file \"config.txt\" not found, using default values instead.\n");
+        strcpy(player_conf.language_id, "en");
         engine.fov = 45.0f;
+        player_conf.res_x = 1366;
+        player_conf.res_y = 768;
+        player_conf.fullscreen = 1;
     }
     else{
-        while(fgets(line, sizeof(line), config_file) != NULL){
-            i++;
+        for(int i = 1; i <= 5 && fgets(line, sizeof(line), config_file) != NULL; i++){
             line[strcspn(line, "\n")] = 0;
-            if(i == 1){
-                fgets(line, sizeof(line), config_file);
-                strcpy(player_conf.player_name, line);
+            switch(i){
+                case 1:
+                    strcpy(player_conf.player_name, line);
+                    break;
+                case 2:
+                    if(sscanf(line, "%s", player_conf.language_id) != 1){
+                        printf("Incorrect format in line %d, using default language.\n", i);
+                        strcpy(player_conf.language_id, "en");
+                    }
+                    break;
+                case 3:
+                    if(sscanf(line, "%lf", &engine.fov) != 1){
+                        printf("Incorrect format in line %d, using default FOV.\n", i);
+                        engine.fov = 45.0f;
+                    }
+                    break;
+                case 4:
+                    if(sscanf(line, "%d %d", &player_conf.res_x, &player_conf.res_y) != 2){
+                        printf("Incorrect format in line %d, using default resolution.\n", i);
+                        player_conf.res_x = 1366;
+                        player_conf.res_y = 768;
+                    }
+                    break;
+                case 5:
+                    if(sscanf(line, "%d", &player_conf.fullscreen) != 1){
+                        printf("Incorrect format in line %d, using default fullscreen mode.\n", i);
+                        player_conf.fullscreen = 1;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else if(i == 2){
-                if(sscanf(line, "%s", player_conf.language_id) != 1){
-                    printf("Incorrect amount of parameters or wrong format in line %d, using default language instead.\n", i+1);
-		    strcpy(player_conf.language_id, "en");
-                }
-            }
-            else if(i == 3){
-                if(sscanf(line, "%lf", &engine.fov) != 1){
-                    printf("Incorrect amount of parameters or wrong format in line %d, using default FOV instead.\n", i+1);
-                    engine.fov = 45.0f;
-                }
-            }
-            else if(i == 4){
-                if(sscanf(line, "%d %d", &player_conf.res_x, &player_conf.res_y) != 2){
-                    printf("Incorrect amount of parameters or wrong format in line %d, using default resolution instead.\n", i+1);
-                    player_conf.res_x = 1366;
-                    player_conf.res_y = 768;
-                }
-	    }
-	    else if(i == 5){
-                if(sscanf(line, "%d", &player_conf.fullscreen) != 1){
-                    printf("Incorrect amount of parameteres or wrong format in line %d, using default fullscreen mode instead.\n", i+1);
-                    player_conf.fullscreen = 1;
-                }
-	    }
         }
         fclose(config_file);
     }
 
-    printf("FOV: %lf\n", engine.fov);
+    if(flags.dflag){
+        printf("Player name: %s\n", player_conf.player_name);
+        printf("In-game language id: %s\n", player_conf.language_id);
+        printf("Player FOV: %lf\n", engine.fov);
+        printf("Width: %d, Height: %d\n", player_conf.res_x, player_conf.res_y);
+        player_conf.fullscreen ? printf("Fullscreen mode: YES\n") : printf("Fullscreen mode: NO\n");
+    }
 
     open_map();
 
