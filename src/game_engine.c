@@ -6,8 +6,10 @@
 #include <string.h>
 #include "./ge/load_map.c"
 #include "./ge/load_map.h"
+#include "main.h"
 
 extern struct p_initial_pos pip;
+extern struct flagstruct flags;
 
 int width = 1366, height = 768;
 
@@ -18,11 +20,12 @@ typedef struct {
     double fov;
 } GameEngine;
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 //Función para inicializar GLFW y OpenGL
-GLFWwindow* initWindow(GameEngine* engine) {
-    if (!glfwInit()) {
-        return NULL;
-    }
+GLFWwindow* initWindow(GameEngine* engine){
+
+    if(!glfwInit()) return NULL;
 
     strcat(pip.map_name, " - Shooter Without Name");
 
@@ -30,7 +33,7 @@ GLFWwindow* initWindow(GameEngine* engine) {
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
     engine->window = glfwCreateWindow(width, height, pip.map_name, NULL, NULL);
-    if (!engine->window) {
+    if(!engine->window){
         glfwTerminate();
         return NULL;
     }
@@ -48,6 +51,8 @@ GLFWwindow* initWindow(GameEngine* engine) {
 
     //Activar el test de profundidad
     glEnable(GL_DEPTH_TEST);
+
+    glfwSetKeyCallback(engine->window, key_callback);
 
     return engine->window;
 }
@@ -69,68 +74,71 @@ void draw(GameEngine* engine) {
     glPushMatrix();
     glScalef(2.0f, 2.0f, 2.0f); //Escalar todo en 3D
 
-
-    //Dibujar mapa
     glBegin(GL_QUADS);
     	render_map();
-    glEnd(); //Finalizar la definición de los triángulos
+    glEnd();
 
     glPopMatrix(); //Restaurar la matriz de transformación
-
     
     glfwSwapBuffers(engine->window);
 }
 
-//Función para manejar el input del jugador
-void handleInput(GameEngine* engine, double deltaTime) {
-    float speed = 10.0f;         //Velocidad de movimiento (unidades por segundo)
-    float rotationSpeed = 75.0f; //Velocidad de rotación   (grados por segundo)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if(key == GLFW_KEY_F && action == GLFW_PRESS && (mods & GLFW_MOD_CONTROL)){
+        if(flags.fflag) flags.fflag = 0;
+	else flags.fflag = 1;
+	printf("DEBUG: Toggled fflag with Ctrl+F\n");
+    }
+}
+        
+
+void handleInput(GameEngine* engine, double deltaTime){
+    float speed = 10.0f;
+    float rotationSpeed = 75.0f;
 
     //Comprobamos las teclas presionadas
-    if (glfwGetKey(engine->window, GLFW_KEY_W) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_W) == GLFW_PRESS){
         engine->playerX += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia adelante
         engine->playerZ += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_S) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_S) == GLFW_PRESS){
         engine->playerX -= cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia atrás
         engine->playerZ -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_LEFT) == GLFW_PRESS){
         engine->angle -= rotationSpeed * deltaTime; //Rotar hacia la izquierda
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_RIGHT) == GLFW_PRESS){
         engine->angle += rotationSpeed * deltaTime; //Rotar hacia la derecha
     }
     //Movimiento perpendicular
-    if (glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_A) == GLFW_PRESS){
         engine->playerX += sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la izquierda
         engine->playerZ -= cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_D) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_D) == GLFW_PRESS){
         engine->playerX -= sin(engine->angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la derecha
         engine->playerZ += cos(engine->angle * 3.14159f / 180.0f) * speed * deltaTime;
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_UP) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_UP) == GLFW_PRESS){
         engine->playerY +=  speed * deltaTime; //Movimiento hacia arriba
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_DOWN) == GLFW_PRESS){
         engine->playerY -= speed * deltaTime; //Movimiento hacia abajo
     }
 
 
     //Modificar la escala
-    if (glfwGetKey(engine->window, GLFW_KEY_E) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_E) == GLFW_PRESS){
         engine->fov += 2.5f * deltaTime; //Aumentar el FOV
-        if (engine->fov > 120.0f) engine->fov = 120.0f; //Limitar la escala máxima
+        if(engine->fov > 120.0f) engine->fov = 120.0f; //Limitar la escala máxima
     }
-    if (glfwGetKey(engine->window, GLFW_KEY_Q) == GLFW_PRESS) {
+    if(glfwGetKey(engine->window, GLFW_KEY_Q) == GLFW_PRESS){
         engine->fov -= 2.5f * deltaTime; //Reducir el FOV
-        if (engine->fov < 30.0f) engine->fov = 30.0f; //Limitar la escala mínima
+        if(engine->fov < 30.0f) engine->fov = 30.0f; //Limitar la escala mínima
     }
 
-    //Salir si se presiona Escape
-    if (glfwGetKey(engine->window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine->window)) {
-        glfwSetWindowShouldClose(engine->window, GLFW_TRUE); //Salir
+    if(glfwGetKey(engine->window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine->window)){
+        glfwSetWindowShouldClose(engine->window, GLFW_TRUE);
     }
 }
-
