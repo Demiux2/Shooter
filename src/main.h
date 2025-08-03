@@ -16,7 +16,7 @@ struct player_config{
 struct GameEngine{
     GLFWwindow* window;
     float playerX, playerY, playerZ;
-    float angle;
+    float yaw, pitch;
     double fov;
 };
 

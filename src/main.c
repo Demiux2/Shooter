@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
     engine.playerX = pip.pX;
     engine.playerY = pip.pY;
     engine.playerZ = pip.pZ;
-    engine.angle = pip.pA;
+    engine.yaw = pip.pA;
 
     if(initWindow(&engine) == NULL) return -1;
 

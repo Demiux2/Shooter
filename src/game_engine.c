@@ -59,9 +59,11 @@ void draw(struct GameEngine*) {
 
     //Establecer la cámara
     glLoadIdentity(); //Restablecer la matriz de modelo
-    gluLookAt(engine.playerX, engine.playerY, engine.playerZ, //Posición de la cámara
-              engine.playerX + cos(engine.angle * 3.14159f / 180.0f), engine.playerY, engine.playerZ + sin(engine.angle * 3.14159f / 180.0f), //Ángulo de la cámara
-              0.0f, 1.0f, 0.0f);
+    gluLookAt(engine.playerX, engine.playerY, engine.playerZ,
+            engine.playerX + cosf(engine.yaw * M_PI / 180.0f) * cosf(engine.pitch * M_PI / 180.0f),
+            engine.playerY + sinf(engine.pitch * M_PI / 180.0f),
+            engine.playerZ + sinf(engine.yaw * M_PI / 180.0f) * cosf(engine.pitch * M_PI / 180.0f),
+            0.0f, 1.0f, 0.0f);
 
     //Aplicar la escala 3D a la escena
     glPushMatrix();
@@ -89,46 +91,55 @@ void handleInput(struct GameEngine*, double deltaTime){
     float speed = 10.0f;
     float rotationSpeed = 75.0f;
 
-    //Comprobamos las teclas presionadas
-    if(glfwGetKey(engine.window, GLFW_KEY_W) == GLFW_PRESS){
-        engine.playerX += cos(engine.angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia adelante
-        engine.playerZ += sin(engine.angle * 3.14159f / 180.0f) * speed * deltaTime;
-    }
-    if(glfwGetKey(engine.window, GLFW_KEY_S) == GLFW_PRESS){
-        engine.playerX -= cos(engine.angle * 3.14159f / 180.0f) * speed * deltaTime; //Mover hacia atrás
-        engine.playerZ -= sin(engine.angle * 3.14159f / 180.0f) * speed * deltaTime;
-    }
+    //Giro
     if(glfwGetKey(engine.window, GLFW_KEY_LEFT) == GLFW_PRESS){
-        engine.angle -= rotationSpeed * deltaTime; //Rotar hacia la izquierda
+        engine.yaw -= rotationSpeed * deltaTime; //Girar hacia la izquierda
     }
     if(glfwGetKey(engine.window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-        engine.angle += rotationSpeed * deltaTime; //Rotar hacia la derecha
-    }
-    //Movimiento perpendicular
-    if(glfwGetKey(engine.window, GLFW_KEY_A) == GLFW_PRESS){
-        engine.playerX += sin(engine.angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la izquierda
-        engine.playerZ -= cos(engine.angle * 3.14159f / 180.0f) * speed * deltaTime;
-    }
-    if(glfwGetKey(engine.window, GLFW_KEY_D) == GLFW_PRESS){
-        engine.playerX -= sin(engine.angle * 3.14159f / 180.0f) * speed * deltaTime; //Movimiento a la derecha
-        engine.playerZ += cos(engine.angle * 3.14159f / 180.0f) * speed * deltaTime;
+        engine.yaw += rotationSpeed * deltaTime; //Girar hacia la derecha
     }
     if(glfwGetKey(engine.window, GLFW_KEY_UP) == GLFW_PRESS){
-        engine.playerY +=  speed * deltaTime; //Movimiento hacia arriba
+        engine.pitch += rotationSpeed * deltaTime; //Girar hacia arriba
+        if(engine.pitch > 89.0f) engine.pitch = 89.0f;
     }
     if(glfwGetKey(engine.window, GLFW_KEY_DOWN) == GLFW_PRESS){
+        engine.pitch -= rotationSpeed * deltaTime; //Girar hacia abajo
+        if(engine.pitch < -89.0f) engine.pitch = -89.0f;
+    }
+
+    //Movimiento
+    if(glfwGetKey(engine.window, GLFW_KEY_W) == GLFW_PRESS){
+        engine.playerX += cos(engine.yaw * M_PI / 180.0f) * speed * deltaTime; //Mover hacia adelante
+        engine.playerZ += sin(engine.yaw * M_PI / 180.0f) * speed * deltaTime;
+    }
+    if(glfwGetKey(engine.window, GLFW_KEY_S) == GLFW_PRESS){
+        engine.playerX -= cos(engine.yaw * M_PI / 180.0f) * speed * deltaTime; //Mover hacia atrás
+        engine.playerZ -= sin(engine.yaw * M_PI / 180.0f) * speed * deltaTime;
+    }
+    if(glfwGetKey(engine.window, GLFW_KEY_A) == GLFW_PRESS){
+        engine.playerX += sin(engine.yaw * M_PI / 180.0f) * speed * deltaTime; //Movimiento a la izquierda
+        engine.playerZ -= cos(engine.yaw * M_PI / 180.0f) * speed * deltaTime;
+    }
+    if(glfwGetKey(engine.window, GLFW_KEY_D) == GLFW_PRESS){
+        engine.playerX -= sin(engine.yaw * M_PI / 180.0f) * speed * deltaTime; //Movimiento a la derecha
+        engine.playerZ += cos(engine.yaw * M_PI / 180.0f) * speed * deltaTime;
+    }
+    if(glfwGetKey(engine.window, GLFW_KEY_SPACE) == GLFW_PRESS){
+        engine.playerY +=  speed * deltaTime; //Movimiento hacia arriba
+    }
+    if(glfwGetKey(engine.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
         engine.playerY -= speed * deltaTime; //Movimiento hacia abajo
     }
 
 
-    //Modificar la escala
+    //FOV
     if(glfwGetKey(engine.window, GLFW_KEY_E) == GLFW_PRESS){
-        engine.fov += 2.5f * deltaTime; //Aumentar el FOV
-        if(engine.fov > 120.0f) engine.fov = 120.0f; //Limitar la escala máxima
+        engine.fov += 2.5f * deltaTime;
+        if(engine.fov > 120.0f) engine.fov = 120.0f;
     }
     if(glfwGetKey(engine.window, GLFW_KEY_Q) == GLFW_PRESS){
-        engine.fov -= 2.5f * deltaTime; //Reducir el FOV
-        if(engine.fov < 30.0f) engine.fov = 30.0f; //Limitar la escala mínima
+        engine.fov -= 2.5f * deltaTime;
+        if(engine.fov < 30.0f) engine.fov = 30.0f;
     }
 
     if(glfwGetKey(engine.window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine.window)){
