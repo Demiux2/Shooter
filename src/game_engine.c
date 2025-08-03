@@ -32,7 +32,6 @@ GLFWwindow* initWindow(struct GameEngine*){
     }
 
     glfwMakeContextCurrent(engine.window);
-    glEnable(GL_TEXTURE_2D);
 
     //Deshabilitar V-Sync
     glfwSwapInterval(0);
@@ -52,7 +51,6 @@ GLFWwindow* initWindow(struct GameEngine*){
 }
 void draw(struct GameEngine*) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_TEXTURE_2D);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

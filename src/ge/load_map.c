@@ -17,7 +17,6 @@
 
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
-//extern GLuint textures[];
 
 int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_SECTORS] = {0};
 int w_mats[MAX_WALLS] = {0}, w_mat = 0, sw_c = 0;
@@ -178,10 +177,18 @@ int render_map(){
         float texture_repeat = length / 1.0f;
 
         glBegin(GL_QUADS);
-            glTexCoord2f(0.0f          , 0.0f);            glVertex3f(x1, 0.0f, z1);
-            glTexCoord2f(0.0f          , texture_repeat);  glVertex3f(x1, 5.0f, z1);
-            glTexCoord2f(texture_repeat, texture_repeat);  glVertex3f(x2, 5.0f, z2);
-            glTexCoord2f(texture_repeat, 0.0f);            glVertex3f(x2, 0.0f, z2);
+            if(w_mats[i] > 0){
+                glTexCoord2f(0.0f          , 0.0f          );  glVertex3f(x1, 0.0f, z1);
+                glTexCoord2f(0.0f          , texture_repeat);  glVertex3f(x1, 5.0f, z1);
+                glTexCoord2f(texture_repeat, texture_repeat);  glVertex3f(x2, 5.0f, z2);
+                glTexCoord2f(texture_repeat, 0.0f          );  glVertex3f(x2, 0.0f, z2);
+            }
+            else{
+                glVertex3f(x1, 0.0f, z1);
+                glVertex3f(x1, 5.0f, z1);
+                glVertex3f(x2, 5.0f, z2);
+                glVertex3f(x2, 0.0f, z2);
+            }
         glEnd();
 
     }

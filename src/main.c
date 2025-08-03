@@ -104,7 +104,6 @@ int main(int argc, char *argv[]){
     int framebufferWidth, framebufferHeight;
     glfwGetFramebufferSize(engine.window, &framebufferWidth, &framebufferHeight);
     glViewport(0, 0, framebufferWidth, framebufferHeight);
-    glEnable(GL_TEXTURE_2D);
 
     double lastTime = glfwGetTime();
     double deltaTime = 0.0;
