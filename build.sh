@@ -1,1 +1,1 @@
-gcc src/main.c -lGL -lGLU -lglfw -lm -o main
+gcc $(find src -name '*.c') -lGL -lGLU -lglfw -lm -o main
