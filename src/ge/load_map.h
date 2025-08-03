@@ -6,6 +6,9 @@ struct p_initial_pos{
     char map[200], map_name[256], filename[256];
 };
 
-struct p_initial_pos pip;
+extern struct p_initial_pos pip;
+
+void open_map();
+int render_map();
 
 #endif

@@ -1,32 +1,33 @@
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <string.h>
-#include "game_engine.c"
 #include "./ge/load_map.h"
+#include "./ge/load_textures.h"
 #include "main.h"
 
-extern struct p_initial_pos pip;
-extern struct flagstruct flags;
-extern struct player_config player_conf;
+struct p_initial_pos pip;
+struct flagstruct flags;
+struct player_config player_conf;
+struct GameEngine engine;
+extern unsigned int textures[];
+extern unsigned int textureID;
 
 int main(int argc, char *argv[]){
 
     if(argv[1] == NULL){
         printf("Error: You must include a map filename and any optional flags you want.\n");
-    return 1;
+        return 1;
     }
 
     for(int i = 1; i < argc; i++){
-        if(i == 1)
-        strcpy(pip.filename, argv[i]);
-
-        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0))
-            flags.fflag = 1;
-    else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0))
-            flags.dflag = 1;
+        if(i == 1) strcpy(pip.filename, argv[i]);
+        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)) flags.fflag = 1;
+        else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0)) flags.dflag = 1;
     }
 
-    GameEngine engine = {0};
+    memset(&engine, 0, sizeof(engine));
 
     FILE* config_file = fopen("./config.txt", "r"); //Se lee el archivo de configuración
     char line[64] = {0};
@@ -96,20 +97,21 @@ int main(int argc, char *argv[]){
     engine.playerZ = pip.pZ;
     engine.angle = pip.pA;
 
-    if(initWindow(&engine) == NULL){
-        return -1;
-    }
+    if(initWindow(&engine) == NULL) return -1;
+
+    load_all_tex();
 
     int framebufferWidth, framebufferHeight;
     glfwGetFramebufferSize(engine.window, &framebufferWidth, &framebufferHeight);
     glViewport(0, 0, framebufferWidth, framebufferHeight);
+    glEnable(GL_TEXTURE_2D);
 
     double lastTime = glfwGetTime();
     double deltaTime = 0.0;
     int frame_counter = 0;
     double frameStartTime = lastTime;
 
-    while (!glfwWindowShouldClose(engine.window)) {
+    while (!glfwWindowShouldClose(engine.window)){
         double currentTime = glfwGetTime();
 
         //Calcular deltaTime

@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <GLFW/glfw3.h>
+
 struct flagstruct{
     int fflag, dflag;
 };
@@ -11,7 +13,19 @@ struct player_config{
     int fullscreen;
 };
 
-struct flagstruct flags;
-struct player_config player_conf;
+struct GameEngine{
+    GLFWwindow* window;
+    float playerX, playerY, playerZ;
+    float angle;
+    double fov;
+};
+
+extern struct flagstruct flags;
+extern struct player_config player_conf;
+extern struct GameEngine engine;
+
+GLFWwindow* initWindow(struct GameEngine*);
+void draw(struct GameEngine*);
+void handleInput(struct GameEngine*, double deltaTime);
 
 #endif

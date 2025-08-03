@@ -2,9 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GLFW/glfw3.h>
 #include "load_map.h"
 #include "../main.h"
-#include "minmax.h"
+//#include "minmax.h"
+#include "load_textures.h"
 
 #define MAX_LINE 256
 #define MAX_WALLS 2048
@@ -12,22 +17,21 @@
 
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
+//extern GLuint textures[];
 
-char path1[125] = "./maps/";
-char path2[125] = "./src/maps/";
-
-FILE *map_file;
 int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_SECTORS] = {0};
 int w_mats[MAX_WALLS] = {0}, w_mat = 0, sw_c = 0;
 float wall_colors[MAX_WALLS][3] = {0};
 
 int w_counter = 0, s_counter = 0;
 
-int map_loaded = 0;
-
 void open_map(){
+    FILE *map_file;
+    int map_loaded = 0;
     if(map_loaded) return;
 
+    char path1[125] = "./maps/";
+    char path2[125] = "./src/maps/";
     strcpy(pip.map, pip.filename);
     strcat(path1, pip.map);
     strcat(path2, pip.map);
@@ -85,7 +89,7 @@ void open_map(){
 
         //Procesar [WALLS]
         if(header_counter == 1){
-            if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mat) == 5){
+            if(sscanf(line, "%i %i %i %i %i", &walls[w_counter][0], &walls[w_counter][1], &walls[w_counter][2], &walls[w_counter][3], &w_mats[w_counter]) == 5){
                 wall_colors[w_counter][0] = ((float)rand() / (float)(RAND_MAX));
                 wall_colors[w_counter][1] = ((float)rand() / (float)(RAND_MAX));
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
@@ -152,19 +156,34 @@ void open_map(){
 }
 
 int render_map(){
+
     for(int i = 0; i < w_counter; i++){
-	if(w_mats[i] == 0)
+        if(w_mats[i] > 0){
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glColor3f(1.0f, 1.0f, 1.0f);
+        }
+        else{
+            glDisable(GL_TEXTURE_2D);
             glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
-	else
-	    glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]); //TODO: Temporal hasta que se implementen las texturas
+        }
 
         //Dibujar la pared
+        float x1 = walls[i][0], x2 = walls[i][2], z1 = walls[i][1], z2 = walls[i][3];
+
+        float dx = x2 - x1, dz = z2 - z1;
+        float length = sqrt(dx * dx + dz * dz);
+
+        float texture_repeat = length / 1.0f;
+
         glBegin(GL_QUADS);
-            glVertex3f(walls[i][0], 0, walls[i][1]);
-            glVertex3f(walls[i][0], 5, walls[i][1]);
-            glVertex3f(walls[i][2], 5, walls[i][3]);
-            glVertex3f(walls[i][2], 0, walls[i][3]);
+            glTexCoord2f(0.0f          , 0.0f);            glVertex3f(x1, 0.0f, z1);
+            glTexCoord2f(0.0f          , texture_repeat);  glVertex3f(x1, 5.0f, z1);
+            glTexCoord2f(texture_repeat, texture_repeat);  glVertex3f(x2, 5.0f, z2);
+            glTexCoord2f(texture_repeat, 0.0f);            glVertex3f(x2, 0.0f, z2);
         glEnd();
+
     }
     
     for(int s = 0; s < s_counter; s++){
