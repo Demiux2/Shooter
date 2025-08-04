@@ -81,8 +81,17 @@ void draw(struct GameEngine*) {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
     if(key == GLFW_KEY_F && action == GLFW_PRESS && (mods & GLFW_MOD_CONTROL)){
         if(flags.fflag) flags.fflag = 0;
-	else flags.fflag = 1;
-	printf("DEBUG: Toggled fflag with Ctrl+F\n");
+        else flags.fflag = 1;
+    }
+    
+    //FOV
+    if(key == GLFW_KEY_E && action == GLFW_PRESS){
+        engine.fov += 1.0f;
+        if(engine.fov > 120.0f) engine.fov = 120.0f;
+    }
+    if(key == GLFW_KEY_Q && action == GLFW_PRESS){
+        engine.fov -= 1.0;
+        if(engine.fov < 30.0f) engine.fov = 30.0f;
     }
 }
         
@@ -129,17 +138,6 @@ void handleInput(struct GameEngine*, double deltaTime){
     }
     if(glfwGetKey(engine.window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
         engine.playerY -= speed * deltaTime; //Movimiento hacia abajo
-    }
-
-
-    //FOV
-    if(glfwGetKey(engine.window, GLFW_KEY_E) == GLFW_PRESS){
-        engine.fov += 2.5f * deltaTime;
-        if(engine.fov > 120.0f) engine.fov = 120.0f;
-    }
-    if(glfwGetKey(engine.window, GLFW_KEY_Q) == GLFW_PRESS){
-        engine.fov -= 2.5f * deltaTime;
-        if(engine.fov < 30.0f) engine.fov = 30.0f;
     }
 
     if(glfwGetKey(engine.window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(engine.window)){
