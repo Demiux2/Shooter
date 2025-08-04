@@ -3,23 +3,18 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GLFW/glfw3.h>
 #include "load_map.h"
 #include "../main.h"
-//#include "minmax.h"
 #include "load_textures.h"
 
-#define MAX_LINE 256
 #define MAX_WALLS 2048
 #define MAX_SECTORS 1024
 
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
 
-int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_SECTORS] = {0};
-int w_mats[MAX_WALLS] = {0}, w_mat = 0, sw_c = 0;
+int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_WALLS + 5] = {0};
+int w_mats[MAX_WALLS] = {0}, w_mat = 0;
 float wall_colors[MAX_WALLS][3] = {0};
 
 int w_counter = 0, s_counter = 0;
@@ -47,7 +42,7 @@ void open_map(){
     }
 
     int line_counter = 1, header_counter = 0, w_quantity;
-    char line[MAX_LINE];
+    char line[512];
 
     srand(time(NULL));
 
@@ -125,8 +120,7 @@ void open_map(){
                     }
                     if(flags.dflag){
                         printf("%d", sectors[s_counter][i]);
-                        if(i < wall_count)
-                            printf(", ");
+                        if(i < wall_count) printf(", ");
                     }
 
                     while(*ptr != ' ' && *ptr != '\0') ptr++;
@@ -190,9 +184,8 @@ int render_map(){
                 glVertex3f(x2, 0.0f, z2);
             }
         glEnd();
-
     }
-    
+
     for(int s = 0; s < s_counter; s++){
         int wall_count = sectors[s][0];
         float floor_height = sectors[s][wall_count + 1];
