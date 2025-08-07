@@ -153,7 +153,7 @@ int render_map(){
     for(int i = 0; i < w_counter; i++){
         if(w_mats[i] > 0){
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
+	    if(w_mats[i] == w_mats[i-1]) glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
             glColor3f(1.0f, 1.0f, 1.0f);
         }
