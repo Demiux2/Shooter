@@ -39,7 +39,7 @@ void open_map(){
             printf("Error: could not open the map.\n");
             exit(1);
         }
-        printf("[DEBUG] READING %s", pip.filename);
+        if(flags.dflag) printf("[DEBUG] READING %s\n", pip.filename);
     }
 
     int line_counter = 1, header_counter = 0, w_quantity;

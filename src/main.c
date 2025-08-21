@@ -23,7 +23,12 @@ int main(int argc, char *argv[]){
 
     for(int i = 1; i < argc; i++){
         if(i == 1) strcpy(pip.filename, argv[i]);
-        if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)) flags.fflag = 1;
+
+	if((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0)){
+            printf("Use: <mapfilename> [-h | --help] [-f | --fps] [-d | --debug]\n");
+	    return 0;
+        }
+	else if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)) flags.fflag = 1;
         else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0)) flags.dflag = 1;
     }
 
