@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
     if(config_file == NULL){
         printf("Configuration file \"config.txt\" not found, using default values instead.\n");
         strcpy(player_conf.player_name, "Username");
-        strcpy(player_conf.language_id, "en");
+        strcpy(player_conf.language_id, "en_us");
         engine.fov = 45.0f;
         player_conf.res_x = 1366;
         player_conf.res_y = 768;
