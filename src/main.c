@@ -83,11 +83,12 @@ int main(int argc, char *argv[]){
     }
 
     if(flags.dflag){
-        printf("Player name: %s\n", player_conf.player_name);
-        printf("In-game language id: %s\n", player_conf.language_id);
-        printf("Player FOV: %lf\n", engine.fov);
-        printf("Width: %d, Height: %d\n", player_conf.res_x, player_conf.res_y);
-        player_conf.fullscreen ? printf("Fullscreen mode: YES\n") : printf("Fullscreen mode: NO\n");
+        printf("[DEBUG] Player name: %s\n", player_conf.player_name);
+        printf("[DEBUG] In-game language id: %s\n", player_conf.language_id);
+        printf("[DEBUG] Player FOV: %lf\n", engine.fov);
+        printf("[DEBUG] Width: %d, Height: %d\n", player_conf.res_x, player_conf.res_y);
+        player_conf.fullscreen ? printf("[DEBUG] Fullscreen mode: YES\n") : printf("[DEBUG] Fullscreen mode: NO\n");
+        printf("\n");
     }
 
     open_map();

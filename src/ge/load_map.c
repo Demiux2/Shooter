@@ -14,7 +14,7 @@ extern struct p_initial_pos pip;
 extern struct flagstruct flags;
 
 int walls[MAX_WALLS][4] = {0}, sectors[MAX_SECTORS][MAX_WALLS + 5] = {0};
-int w_mats[MAX_WALLS] = {0}, w_mat = 0;
+int w_mats[MAX_WALLS] = {0};
 float wall_colors[MAX_WALLS][3] = {0};
 
 int w_counter = 0, s_counter = 0;
@@ -39,6 +39,7 @@ void open_map(){
             printf("Error: could not open the map.\n");
             exit(1);
         }
+        printf("[DEBUG] READING %s", pip.filename);
     }
 
     int line_counter = 1, header_counter = 0, w_quantity;
@@ -54,8 +55,7 @@ void open_map(){
 
         if(line_counter == 1){
             strcpy(pip.map_name, line);
-            if(flags.dflag)
-		        printf("[DEBUG] Map name: %s\n", pip.map_name);
+            if(flags.dflag) printf("[DEBUG] Map name: %s\n", pip.map_name);
         }
 
         if(line_counter == 2){
@@ -63,6 +63,7 @@ void open_map(){
                 printf("Error: Incorrect amount of player parameters (at line 2)\n");
                 exit(1);
             }
+	    if(flags.dflag) printf("[DEBUG] Player parameters: X:%lf, Y:%lf, Z:%lf, Yaw:%lf\n", pip.pX, pip.pY, pip.pZ, pip.pA);
             line_counter++;
             continue;
         }
@@ -89,10 +90,16 @@ void open_map(){
                 wall_colors[w_counter][2] = ((float)rand() / (float)(RAND_MAX));
 
 		    if(flags.dflag)
-                        printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
-                            w_counter, walls[w_counter][0], walls[w_counter][1], 
+                        if(w_mats[w_counter] == 0){
+                            printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Color: (%f, %f, %f)\n", 
+                            w_counter + 1, walls[w_counter][0], walls[w_counter][1], 
                             walls[w_counter][2], walls[w_counter][3],
                             wall_colors[w_counter][0], wall_colors[w_counter][1], wall_colors[w_counter][2]);
+			}
+                        else printf("[DEBUG] Wall %d: p1(%d, %d), p2(%d, %d) - Material: %d\n",
+                            w_counter + 1, walls[w_counter][0], walls[w_counter][1], 
+                            walls[w_counter][2], walls[w_counter][3],
+                            w_mats[w_counter]);
 
                 w_counter++;
             }
@@ -153,7 +160,7 @@ int render_map(){
     for(int i = 0; i < w_counter; i++){
         if(w_mats[i] > 0){
             glEnable(GL_TEXTURE_2D);
-	    if(w_mats[i] == w_mats[i-1]) glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
+	    if(w_mats[i] != w_mats[i-1]) glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
             glColor3f(1.0f, 1.0f, 1.0f);
         }
@@ -187,9 +194,18 @@ int render_map(){
     }
 
     for(int s = 0; s < s_counter; s++){
+        int wall_id;
         int wall_count = sectors[s][0];
         float floor_height = sectors[s][wall_count + 1];
         float ceiling_height = sectors[s][wall_count + 3];
+        for(int i = 1; i <= wall_count; i++){
+            int wall_id = sectors[s][i];
+	}
+	if(walls[wall_id - 1][1] != walls[wall_id][0]){
+            int temp = walls[wall_id][0];
+            walls[wall_id][0] = walls[wall_id][1];
+            walls[wall_id][1] = temp;
+        }
 
         // Dibujar el piso
         glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" para el piso

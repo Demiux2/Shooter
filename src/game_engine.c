@@ -10,8 +10,7 @@
 extern struct p_initial_pos pip;
 extern struct flagstruct flags;
 extern struct GameEngine engine;
-
-int width = 1366, height = 768;
+extern struct player_config player_conf;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -25,7 +24,7 @@ GLFWwindow* initWindow(struct GameEngine*){
     //Activar doble buffer
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
-    engine.window = glfwCreateWindow(width, height, pip.map_name, NULL, NULL);
+    engine.window = glfwCreateWindow(player_conf.res_x, player_conf.res_y, pip.map_name, glfwGetPrimaryMonitor(), NULL);
     if(!engine.window){
         glfwTerminate();
         return NULL;
@@ -39,7 +38,7 @@ GLFWwindow* initWindow(struct GameEngine*){
     //Configuración de la perspectiva
     glMatrixMode(GL_PROJECTION); //Matriz de proyección
     glLoadIdentity();            //Limpiar la matriz de proyección actual
-    gluPerspective(engine.fov, (float)width / height, 0.1f, 100.0f);
+    gluPerspective(engine.fov, (float)player_conf.res_x / player_conf.res_y, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);  //Volver a la matriz de modelo
 
     //Activar el test de profundidad
@@ -54,7 +53,7 @@ void draw(struct GameEngine*) {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(engine.fov, (float)width / height, 0.1f, 100.0f);  
+    gluPerspective(engine.fov, (float)player_conf.res_x / player_conf.res_y, 0.1f, 100.0f);  
     glMatrixMode(GL_MODELVIEW);
 
     //Establecer la cámara
