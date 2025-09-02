@@ -25,22 +25,17 @@ void open_map(){
     if(map_loaded) return;
 
     char path1[125] = "./build/maps/";
-    char path2[125] = "./maps/";
     strcpy(pip.map, pip.filename);
     strcat(path1, pip.map);
-    strcat(path2, pip.map);
 
     map_loaded = 1;
 
     map_file = fopen(path1, "r");
     if(map_file == NULL){
-        map_file = fopen(path2, "r");
-        if(map_file == NULL){
-            printf("Error: could not open the map.\n");
-            exit(1);
-        }
-        if(flags.dflag) printf("[DEBUG] READING %s\n", pip.filename);
+        printf("Error: could not open the map.\n");
+        exit(1);
     }
+    if(flags.dflag) printf("[DEBUG] READING %s\n", pip.filename);
 
     int line_counter = 1, header_counter = 0, w_quantity;
     char line[512];

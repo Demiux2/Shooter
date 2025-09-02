@@ -1,1 +1,1 @@
-build/main test3.swnm
+build/main test4.swnm
