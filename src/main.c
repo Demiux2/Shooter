@@ -34,7 +34,7 @@ int main(int argc, char *argv[]){
 
     memset(&engine, 0, sizeof(engine));
 
-    FILE* config_file = fopen("./config.txt", "r"); //Se lee el archivo de configuración
+    FILE* config_file = fopen("build/config.txt", "r"); //Se lee el archivo de configuración
     char line[64] = {0};
     if(config_file == NULL){
         printf("Configuration file \"config.txt\" not found, using default values instead.\n");

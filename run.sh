@@ -1,1 +1,1 @@
-./main test3.swnm
+build/main test3.swnm

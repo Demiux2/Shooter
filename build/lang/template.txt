@@ -1,0 +1,9 @@
+language.autoglottonym=
+language.country=
+language.id=
+
+yes=
+no=
+play=
+settings=
+exit=

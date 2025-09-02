@@ -24,8 +24,8 @@ void open_map(){
     int map_loaded = 0;
     if(map_loaded) return;
 
-    char path1[125] = "./maps/";
-    char path2[125] = "./src/maps/";
+    char path1[125] = "./build/maps/";
+    char path2[125] = "./maps/";
     strcpy(pip.map, pip.filename);
     strcat(path1, pip.map);
     strcat(path2, pip.map);

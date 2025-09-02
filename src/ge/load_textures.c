@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ASSERT(x)
-#include "stb_image.h"
+#include "../lib/stb_image.h"
 #include "load_textures.h"
 
 GLuint textures[64];
@@ -58,5 +58,5 @@ GLuint load_texture(const char* texture_filename){
 }
 
 void load_all_tex(){
-    textures[1] = load_texture("./src/textures/wall/concrete.png");
+    textures[1] = load_texture("build/textures/wall/concrete.png");
 }
