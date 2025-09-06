@@ -1,6 +1,8 @@
-language.autoglottonym=Español de Argentina
+language.autoglottonym=Español (Argentina)
 language.country=Argentina
 language.id=es_ar
+
+test.test1=Este es un string de prueba
 
 yes=Sí
 no=No

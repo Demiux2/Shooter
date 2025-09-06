@@ -1,6 +1,8 @@
-language.autoglottonym=Español de España
+language.autoglottonym=Español (España)
 language.country=España
 language.id=es_es
+
+test.test1=Este es un string de prueba
 
 yes=Sí
 no=No

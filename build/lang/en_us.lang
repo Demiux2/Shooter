@@ -1,6 +1,8 @@
-language.autoglottonym=English
+language.autoglottonym=English (US)
 language.country=United States
 language.id=en_us
+
+test.test1=This is a dummy string
 
 yes=Yes
 no=No
