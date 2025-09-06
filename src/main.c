@@ -3,9 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <string.h>
-#include "./ge/load_map.h"
-#include "./ge/load_textures.h"
 #include "main.h"
+#include "ge/load_map.h"
+#include "ge/load_textures.h"
+#include "ge/translate.h"
 
 struct p_initial_pos pip;
 struct flagstruct flags;
@@ -97,6 +98,8 @@ int main(int argc, char *argv[]){
     }
 
     open_map();
+    load_translations(player_conf.language_id);
+    if(flags.dflag) print_translated("test.test1");
 
     engine.playerX = pip.pX;
     engine.playerY = pip.pY;
