@@ -14,7 +14,6 @@ extern struct player_config player_conf;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-//Función para inicializar GLFW y OpenGL
 GLFWwindow* initWindow(struct GameEngine*){
 
     if(!glfwInit()) return NULL;
@@ -24,7 +23,7 @@ GLFWwindow* initWindow(struct GameEngine*){
     //Activar doble buffer
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
-    engine.window = glfwCreateWindow(player_conf.res_x, player_conf.res_y, pip.map_name, glfwGetPrimaryMonitor(), NULL);
+    engine.window = glfwCreateWindow(player_conf.res_x, player_conf.res_y, pip.map_name, player_conf.fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
     if(!engine.window){
         glfwTerminate();
         return NULL;
