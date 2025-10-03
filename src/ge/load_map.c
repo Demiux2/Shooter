@@ -6,6 +6,7 @@
 #include "load_map.h"
 #include "../main.h"
 #include "load_textures.h"
+#include <assert.h>
 
 #define MAX_WALLS 2048
 #define MAX_SECTORS 1024
@@ -37,8 +38,8 @@ void open_map(){
     }
     if(flags.dflag) printf("[DEBUG] READING %s\n", pip.filename);
 
-    int line_counter = 1, header_counter = 0, w_quantity;
-    char line[512];
+    int line_counter = 1, header_counter = 0;
+    char line[1024];
 
     srand(time(NULL));
 
@@ -155,7 +156,8 @@ int render_map(){
     for(int i = 0; i < w_counter; i++){
         if(w_mats[i] > 0){
             glEnable(GL_TEXTURE_2D);
-	    if(w_mats[i] != w_mats[i-1]) glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
+	        if(i == 0 || w_mats[i] != w_mats[i-1])
+                glBindTexture(GL_TEXTURE_2D, textures[w_mats[i]]);
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
             glColor3f(1.0f, 1.0f, 1.0f);
         }
@@ -164,20 +166,21 @@ int render_map(){
             glColor3f(wall_colors[i][0], wall_colors[i][1], wall_colors[i][2]);
         }
 
-        //Dibujar la pared
+        //Renderizar la pared
         float x1 = walls[i][0], x2 = walls[i][2], z1 = walls[i][1], z2 = walls[i][3];
 
         float dx = x2 - x1, dz = z2 - z1;
         float length = sqrt(dx * dx + dz * dz);
 
-        float texture_repeat = length / 1.0f;
+        float texture_repeat_x = length / 1.0f;
+        float texture_repeat_y = 5.0f / 1.0f;
 
         glBegin(GL_QUADS);
             if(w_mats[i] > 0){
-                glTexCoord2f(0.0f          , 0.0f          );  glVertex3f(x1, 0.0f, z1);
-                glTexCoord2f(0.0f          , texture_repeat);  glVertex3f(x1, 5.0f, z1);
-                glTexCoord2f(texture_repeat, texture_repeat);  glVertex3f(x2, 5.0f, z2);
-                glTexCoord2f(texture_repeat, 0.0f          );  glVertex3f(x2, 0.0f, z2);
+                glTexCoord2f(0.0f            , 0.0f            );  glVertex3f(x1, 0.0f, z1);
+                glTexCoord2f(0.0f            , texture_repeat_y);  glVertex3f(x1, 5.0f, z1);
+                glTexCoord2f(texture_repeat_x, texture_repeat_y);  glVertex3f(x2, 5.0f, z2);
+                glTexCoord2f(texture_repeat_x, 0.0f            );  glVertex3f(x2, 0.0f, z2);
             }
             else{
                 glVertex3f(x1, 0.0f, z1);
@@ -189,20 +192,12 @@ int render_map(){
     }
 
     for(int s = 0; s < s_counter; s++){
-        int wall_id;
+        int wall_id = sectors[s][1];
         int wall_count = sectors[s][0];
         float floor_height = sectors[s][wall_count + 1];
         float ceiling_height = sectors[s][wall_count + 3];
-        for(int i = 1; i <= wall_count; i++){
-            int wall_id = sectors[s][i];
-	}
-	if(walls[wall_id - 1][1] != walls[wall_id][0]){
-            int temp = walls[wall_id][0];
-            walls[wall_id][0] = walls[wall_id][1];
-            walls[wall_id][1] = temp;
-        }
 
-        // Dibujar el piso
+        //Renderizar el piso
         glColor3f(0.243f, 0.259f, 0.294f); //"Anchor gray" para el piso
         glBegin(GL_POLYGON);
         for(int i = 1; i <= wall_count; i++){
@@ -211,7 +206,7 @@ int render_map(){
         }
         glEnd();
 
-        // Dibujar el techo
+        //Renderizar el techo
         glColor3f(0.607f, 0.607f, 0.560f); //"Trout gray" para el techo
         glBegin(GL_POLYGON);
         for(int i = 1; i <= wall_count; i++){
