@@ -38,13 +38,21 @@ int main(int argc, char *argv[]){
     FILE* config_file = fopen("build/config.txt", "r"); //Se lee el archivo de configuración
     char line[64] = {0};
     if(config_file == NULL){
-        printf("Configuration file \"config.txt\" not found, using default values instead.\n");
+        printf("Configuration file \"config.txt\" not found, creating one using default values instead.\n");
         strcpy(player_conf.player_name, "Username");
         strcpy(player_conf.language_id, "en_us");
         engine.fov = 45.0f;
         player_conf.res_x = 1366;
         player_conf.res_y = 768;
         player_conf.fullscreen = 1;
+        config_file = fopen("build/config.txt", "w");
+        if(config_file != NULL){
+        fprintf(config_file, "%s\n%s\n%.1lf\n%d %d\n%d",
+                player_conf.player_name, player_conf.language_id, engine.fov, player_conf.res_x, player_conf.res_y, player_conf.fullscreen);
+        fclose(config_file);
+        }
+        else printf("Configuration file wasn't able to be created, using default values.\n");
+
     }
     else{ //Se guardan las configuraciones del jugador
         for(int i = 1; i <= 5 && fgets(line, sizeof(line), config_file) != NULL; i++){
