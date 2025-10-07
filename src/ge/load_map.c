@@ -6,7 +6,6 @@
 #include "load_map.h"
 #include "../main.h"
 #include "load_textures.h"
-#include <assert.h>
 
 #define MAX_WALLS 2048
 #define MAX_SECTORS 1024
