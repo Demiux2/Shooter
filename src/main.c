@@ -26,8 +26,14 @@ int main(int argc, char *argv[]){
         if(i == 1) strcpy(pip.filename, argv[i]);
 
 	if((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0)){
-            printf("Use: <mapfilename> [-h | --help] [-f | --fps] [-d | --debug]\n");
-	    return 0;
+            printf("Use: <map_filename> [OPTIONS]\n");
+            printf("\nOptions:\n");
+            printf("-f, --fps           Shows FPS. Can be toggled with Ctrl+F.\n");
+            printf("-d, --debug         Shows debug info in the console.\n");
+            printf("\n");
+            printf("-h, --help          Displays this list.\n");
+            printf("\n");
+	        return 0;
         }
 	else if((strcmp(argv[i], "-f") == 0) || (strcmp(argv[i], "--fps") == 0)) flags.fflag = 1;
         else if((strcmp(argv[i], "-d") == 0) || (strcmp(argv[i], "--debug") == 0)) flags.dflag = 1;
